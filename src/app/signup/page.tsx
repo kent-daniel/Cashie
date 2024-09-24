@@ -1,4 +1,5 @@
 import React from "react";
+import { handleSignup } from "./actions";
 
 const Page = () => {
   return (
@@ -7,7 +8,7 @@ const Page = () => {
         <h2 className="mb-6 text-2xl font-bold text-center text-white">
           Sign Up
         </h2>
-        <form>
+        <form action={handleSignup}>
           <div className="mb-4">
             <label
               htmlFor="name"
@@ -18,6 +19,7 @@ const Page = () => {
             <input
               type="text"
               id="name"
+              name="name"
               className="w-full px-3 py-2 bg-zinc-700 border border-zinc-600 rounded-md focus:outline-none text-white"
               placeholder="Enter your name"
               required
@@ -33,6 +35,7 @@ const Page = () => {
             <input
               type="email"
               id="email"
+              name="email"
               className="w-full px-3 py-2 bg-zinc-700 border border-zinc-600 rounded-md focus:outline-none text-white"
               placeholder="Enter your email"
               required
@@ -48,23 +51,9 @@ const Page = () => {
             <input
               type="password"
               id="password"
+              name="password"
               className="w-full px-3 py-2 bg-zinc-700 border border-zinc-600 rounded-md focus:outline-none text-white"
               placeholder="Enter your password"
-              required
-            />
-          </div>
-          <div className="mb-6">
-            <label
-              htmlFor="confirm-password"
-              className="block mb-2 text-sm font-medium text-gray-300"
-            >
-              Confirm Password
-            </label>
-            <input
-              type="password"
-              id="confirm-password"
-              className="w-full px-3 py-2 bg-zinc-700 border border-zinc-600 rounded-md focus:outline-none text-white"
-              placeholder="Confirm your password"
               required
             />
           </div>

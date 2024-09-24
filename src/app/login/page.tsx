@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { handleLogin } from "./actions";
 
 const page = () => {
   return (
@@ -7,7 +8,7 @@ const page = () => {
         <h2 className="mb-6 text-2xl font-bold text-center text-white">
           Login
         </h2>
-        <form>
+        <form action={handleLogin}>
           <div className="mb-4">
             <label
               htmlFor="email"
