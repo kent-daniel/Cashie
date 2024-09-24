@@ -1,7 +1,8 @@
 "use server";
 
-import { supabase } from "@/utils/supabase/server";
+import { createClient } from "@/utils/supabase/server";
 
+const supabase = createClient();
 export async function handleResetPassword(formData: FormData) {
   const email = formData.get("email") as string;
 

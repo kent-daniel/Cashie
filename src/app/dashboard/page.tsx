@@ -1,7 +1,12 @@
 import React from "react";
+import { DataTableDemo } from "./data-table";
 
 const page = () => {
-  return <div>page</div>;
+  return (
+    <div>
+      <DataTableDemo />
+    </div>
+  );
 };
 
 export default page;
