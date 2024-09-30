@@ -12,12 +12,12 @@ export default function Home() {
         alt="My Logo"
         width={100}
         height={100}
-        className="mb-8 rounded-3xl shadow-2xl shadow-emerald-900"
+        className="mb-8 rounded-3xl shadow-2xl shadow-emerald-700 dark:shadow-emerald-900"
       />
-      <h1 className="text-4xl font-bold mb-4 text-gray-100 dark:text-white">
+      <h1 className="text-4xl font-bold mb-4 text-gray-700 dark:text-white">
         Cashie
       </h1>
-      <p className="text-xl mb-8 text-center text-gray-400 dark:text-gray-300">
+      <p className="text-xl mb-8 text-center text-gray-600 dark:text-gray-300">
         Selamat datang di Cashie, aplikasi manajemen keuangan Anda
       </p>
 
@@ -30,7 +30,7 @@ export default function Home() {
         </LoginLink>
         <RegisterLink
           authUrlParams={{ lang: "id" }}
-          className="px-6 py-3 text-center text-emerald-500 bg-zinc-800 border border-emerald-500 rounded-md hover:bg-zinc-800/60 focus:outline-none focus:ring-2 transition duration-300 dark:bg-zinc-800 dark:text-emerald-400 dark:border-emerald-400 dark:hover:bg-zinc-700"
+          className="px-6 py-3 text-center text-emerald-500 hover:bg-zinc-100 border border-emerald-500 rounded-md dark:hover:bg-zinc-800/60 focus:outline-none focus:ring-2 transition duration-300 dark:bg-zinc-800 dark:text-emerald-400 dark:border-emerald-400 dark:hover:bg-zinc-700"
         >
           Daftar Akun Baru
         </RegisterLink>
