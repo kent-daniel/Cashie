@@ -3,7 +3,7 @@ import { DataTableDemo } from "./data-table";
 
 const page = () => {
   return (
-    <div>
+    <div className="p-10">
       <DataTableDemo />
     </div>
   );
