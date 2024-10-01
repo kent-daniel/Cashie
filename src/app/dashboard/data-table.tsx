@@ -16,7 +16,6 @@ import {
 import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -38,104 +37,137 @@ import {
 
 const data: Payment[] = [
   {
-    id: "m5gr84i9",
-    amount: 316,
-    status: "success",
+    amount: 316000,
+
     email: "ken99@yahoo.com",
+    projectCode: "PC001", // Added projectCode
+    category: "credit", // Added category
+    date: new Date("2023-01-01"), // Added date
   },
   {
-    id: "3u1reuv4",
-    amount: 242,
-    status: "success",
+    amount: 242000,
+
     email: "Abe45@gmail.com",
+    projectCode: "PC002", // Added projectCode
+    category: "debit", // Added category
+    date: new Date("2023-01-02"), // Added date
   },
   {
-    id: "derv1ws0",
-    amount: 837,
-    status: "processing",
+    amount: 83007,
     email: "Monserrat44@gmail.com",
+    projectCode: "PC003", // Added projectCode
+    category: "credit", // Added category
+    date: new Date("2023-01-03"), // Added date
   },
   {
-    id: "5kma53ae",
-    amount: 874,
-    status: "success",
+    amount: 8704,
     email: "Silas22@gmail.com",
+    projectCode: "PC004", // Added projectCode
+    category: "debit", // Added category
+    date: new Date("2023-01-04"), // Added date
+    description: "Pembayaran untuk proyek PC004", // Added description
   },
   {
-    id: "bhqecj4p",
-    amount: 721,
-    status: "failed",
+    amount: 72100,
     email: "carmella@hotmail.com",
+    projectCode: "PC005", // Added projectCode
+    category: "credit", // Added category
+    date: new Date("2023-01-05"), // Added date
+    description: "Pembayaran untuk proyek PC001", // Added description
   },
 ];
 
 export type Payment = {
-  id: string;
+  projectCode: string;
   amount: number;
-  status: "pending" | "processing" | "success" | "failed";
+  description?: string;
+  category: "debit" | "credit";
+  date: Date;
   email: string;
 };
 
 export const columns: ColumnDef<Payment>[] = [
   {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-      />
+    accessorKey: "category",
+    header: () => (
+      <div>
+        <span>Kategori</span>
+      </div>
     ),
     cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
-  {
-    accessorKey: "status",
-    header: "Status",
-    cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("status")}</div>
-    ),
-  },
-  {
-    accessorKey: "email",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      <div className={`text-center`}>
+        <p
+          className={`rounded-xl font-semibold border ${
+            row.getValue("category") === "debit"
+              ? "bg-green-100 text-green-500 border-green-500 dark:bg-green-700/50 dark:text-green-500 dark:border-green-500"
+              : "bg-red-100 text-red-500 border-red-500 dark:bg-red-900/70 dark:text-red-500 dark:border-red-500"
+          }`}
         >
-          Email
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
+          {row.getValue("category")}
+        </p>
+      </div>
+    ),
+  },
+  {
+    accessorKey: "projectCode",
+    header: () => <p>Kode Project</p>,
+    cell: ({ row }) => {
+      return <div className="text-start">{row.getValue("projectCode")}</div>;
     },
-    cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div>,
   },
   {
     accessorKey: "amount",
-    header: () => <div className="text-right">Amount</div>,
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      >
+        Biaya
+        <ArrowUpDown className="ml-2 h-4 w-4" />
+      </Button>
+    ),
     cell: ({ row }) => {
       const amount = parseFloat(row.getValue("amount"));
 
       // Format the amount as a dollar amount
-      const formatted = new Intl.NumberFormat("en-US", {
+      const formatted = new Intl.NumberFormat("id", {
         style: "currency",
-        currency: "USD",
+        currency: "IDR",
       }).format(amount);
 
-      return <div className="text-right font-medium">{formatted}</div>;
+      return <div className="text-start">{formatted}</div>;
     },
   },
+  {
+    accessorKey: "email",
+    header: () => {
+      return <p>Pencatat</p>;
+    },
+    cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div>,
+  },
+
+  {
+    accessorKey: "description",
+    header: () => {
+      return <p>Deskripsi</p>;
+    },
+    cell: ({ row }) => (
+      <div className="lowercase">{row.getValue("description")}</div>
+    ),
+  },
+
+  {
+    accessorKey: "date",
+    header: () => {
+      return <p>Tanggal</p>;
+    },
+    cell: ({ row }) => (
+      <div className="lowercase">
+        {(row.getValue("date") as Date).toLocaleDateString()}
+      </div>
+    ),
+  },
+
   {
     id: "actions",
     enableHiding: false,
@@ -153,7 +185,7 @@ export const columns: ColumnDef<Payment>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(payment.id)}
+              onClick={() => navigator.clipboard.writeText(payment.projectCode)}
             >
               Copy payment ID
             </DropdownMenuItem>
@@ -199,10 +231,12 @@ export function DataTableDemo() {
     <div className="w-full">
       <div className="flex items-center py-4">
         <Input
-          placeholder="Filter emails..."
-          value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
+          placeholder="Cari kode project..."
+          value={
+            (table.getColumn("projectCode")?.getFilterValue() as string) ?? ""
+          }
           onChange={(event) =>
-            table.getColumn("email")?.setFilterValue(event.target.value)
+            table.getColumn("projectCode")?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
         />
