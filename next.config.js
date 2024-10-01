@@ -1,10 +1,5 @@
 /** @type {import('next').NextConfig} */
-module.exports = {
-  webpack(config) {
-    // config.experiments.syncWebAssembly = true;
-    config.experiments.asyncWebAssembly = true;
-    return config;
-  },
+const nextConfig = {
   env: {
     KINDE_SITE_URL:
       process.env.KINDE_SITE_URL ?? `https://${process.env.VERCEL_URL}`,
@@ -16,3 +11,5 @@ module.exports = {
       `https://${process.env.VERCEL_URL}/dashboard`,
   },
 };
+
+module.exports = nextConfig;
