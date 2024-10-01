@@ -1,5 +1,5 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {
+module.exports = {
   webpack(config) {
     // config.experiments.syncWebAssembly = true;
     config.experiments.asyncWebAssembly = true;
@@ -16,5 +16,3 @@ const nextConfig = {
       `https://${process.env.VERCEL_URL}/dashboard`,
   },
 };
-
-export default nextConfig;
