@@ -1,5 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  webpack(config) {
+    // config.experiments.syncWebAssembly = true;
+    config.experiments.asyncWebAssembly = true;
+    return config;
+  },
   env: {
     KINDE_SITE_URL:
       process.env.KINDE_SITE_URL ?? `https://${process.env.VERCEL_URL}`,

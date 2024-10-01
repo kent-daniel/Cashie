@@ -13,7 +13,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react";
+import { ArrowUpDown, ChevronDown, MoreHorizontal, XIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -88,33 +88,62 @@ export type Payment = {
 
 export const columns: ColumnDef<Payment>[] = [
   {
-    accessorKey: "category",
-    header: () => (
-      <div>
-        <span>Kategori</span>
-      </div>
-    ),
+    accessorKey: "date",
+    header: () => {
+      return <p>Tanggal</p>;
+    },
     cell: ({ row }) => (
-      <div className={`text-center`}>
-        <p
-          className={`rounded-xl font-semibold border ${
-            row.getValue("category") === "debit"
-              ? "bg-green-100 text-green-500 border-green-500 dark:bg-green-700/50 dark:text-green-500 dark:border-green-500"
-              : "bg-red-100 text-red-500 border-red-500 dark:bg-red-900/70 dark:text-red-500 dark:border-red-500"
-          }`}
-        >
-          {row.getValue("category")}
-        </p>
+      <div className="lowercase">
+        {(row.getValue("date") as Date).toLocaleDateString()}
       </div>
     ),
   },
+
   {
     accessorKey: "projectCode",
     header: () => <p>Kode Project</p>,
     cell: ({ row }) => {
-      return <div className="text-start">{row.getValue("projectCode")}</div>;
+      const projectCode = row.getValue("projectCode") as string;
+      return (
+        <div
+          className="text-start cursor-pointer underline underline-offset-4"
+          onClick={() => {
+            // Query select by id to set the filter value for the input
+            const inputElement = document.getElementById(
+              "projectCodeFilterInput"
+            ) as HTMLInputElement;
+            if (inputElement) {
+              // Create an event that triggers the 'input' change
+              const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
+                window.HTMLInputElement.prototype,
+                "value"
+              )?.set;
+
+              if (nativeInputValueSetter) {
+                nativeInputValueSetter.call(inputElement, projectCode); // Set the value of the input
+
+                // Create and dispatch the event to simulate a user input change
+                const event = new Event("input", { bubbles: true });
+                inputElement.dispatchEvent(event);
+              }
+            }
+          }}
+        >
+          {projectCode}
+        </div>
+      );
     },
   },
+  {
+    accessorKey: "description",
+    header: () => {
+      return <p>Deskripsi</p>;
+    },
+    cell: ({ row }) => (
+      <div className="lowercase">{row.getValue("description")}</div>
+    ),
+  },
+
   {
     accessorKey: "amount",
     header: ({ column }) => (
@@ -139,33 +168,32 @@ export const columns: ColumnDef<Payment>[] = [
     },
   },
   {
+    accessorKey: "category",
+    header: () => (
+      <div>
+        <span>Kategori</span>
+      </div>
+    ),
+    cell: ({ row }) => (
+      <div className={`text-center`}>
+        <p
+          className={`rounded-xl font-semibold border ${
+            row.getValue("category") === "debit"
+              ? "bg-green-100 text-green-500 border-green-500 dark:bg-green-700/50 dark:text-green-500 dark:border-green-500"
+              : "bg-red-100 text-red-500 border-red-500 dark:bg-red-900/70 dark:text-red-500 dark:border-red-500"
+          }`}
+        >
+          {row.getValue("category")}
+        </p>
+      </div>
+    ),
+  },
+  {
     accessorKey: "email",
     header: () => {
       return <p>Pencatat</p>;
     },
     cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div>,
-  },
-
-  {
-    accessorKey: "description",
-    header: () => {
-      return <p>Deskripsi</p>;
-    },
-    cell: ({ row }) => (
-      <div className="lowercase">{row.getValue("description")}</div>
-    ),
-  },
-
-  {
-    accessorKey: "date",
-    header: () => {
-      return <p>Tanggal</p>;
-    },
-    cell: ({ row }) => (
-      <div className="lowercase">
-        {(row.getValue("date") as Date).toLocaleDateString()}
-      </div>
-    ),
   },
 
   {
@@ -230,16 +258,30 @@ export function DataTableDemo() {
   return (
     <div className="w-full">
       <div className="flex items-center py-4">
-        <Input
-          placeholder="Cari kode project..."
-          value={
-            (table.getColumn("projectCode")?.getFilterValue() as string) ?? ""
-          }
-          onChange={(event) =>
-            table.getColumn("projectCode")?.setFilterValue(event.target.value)
-          }
-          className="max-w-sm"
-        />
+        <div className="relative">
+          <Input
+            id="projectCodeFilterInput"
+            placeholder="Cari kode project..."
+            value={
+              (table.getColumn("projectCode")?.getFilterValue() as string) ?? ""
+            }
+            onChange={(event) => {
+              console.log(event);
+              table
+                .getColumn("projectCode")
+                ?.setFilterValue(event.target.value);
+            }}
+            className="max-w-sm pr-10"
+          />
+          <button
+            className="absolute inset-y-0 right-0 px-2 py-1 text-gray-500/50 hover:text-gray-500"
+            onClick={() => {
+              table.getColumn("projectCode")?.setFilterValue("");
+            }}
+          >
+            <XIcon className="h-5 w-5" />
+          </button>
+        </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">
