@@ -1,6 +1,6 @@
 import { db } from "@/db/index";
 import { payments } from "@/models/payment";
-import { eq, lt, gte, ne } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 
 interface PaymentData {
   projectCode: string; // Required field
