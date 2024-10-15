@@ -35,17 +35,37 @@ const projectCodes = [
   { value: "PC005", label: "Project Epsilon" },
 ];
 
+type Amount = {
+  value: number;
+  formatted: string;
+};
+
 export default function PaymentForm() {
-  const [amount, setAmount] = useState("");
-  const [projectCode, setProjectCode] = useState("");
-  const [category, setCategory] = useState("");
+  const [amount, setAmount] = useState<Amount>({ value: 0, formatted: "Rp" });
+  const [projectCode, setProjectCode] = useState<string>("");
+  const [category, setCategory] = useState<"debit" | "credit">("debit");
   const [description, setDescription] = useState("");
   const [open, setOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitMessage, setSubmitMessage] = useState("");
 
+  const formatCurrency = (value: string) => {
+    const formattedValue = value
+      .replace(/\D/g, "") // Remove non-digit characters
+      .replace(/\B(?=(\d{3})+(?!\d))/g, ","); // Add thousands separator
+    return "Rp " + formattedValue; // Add "Rp" as a prefix
+  };
+
+  const parseCurrency = (value: string) => {
+    const numericValue = value
+      .replace(/Rp\s?|,/g, "") // Remove "Rp" prefix and commas
+      .trim(); // Trim any whitespace
+    return Number(numericValue); // Convert to number
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     setIsSubmitting(true);
     setSubmitMessage("");
 
@@ -71,20 +91,8 @@ export default function PaymentForm() {
       onSubmit={handleSubmit}
       className="space-y-6 max-w-4xl mx-auto p-6 rounded-lg shadow"
     >
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="space-y-2">
-          <Label htmlFor="amount">Amount (in cents)</Label>
-          <Input
-            id="amount"
-            type="number"
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-            placeholder="Enter amount in cents"
-            required
-          />
-        </div>
-
-        <div className="space-y-2">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="space-y-2 grid-flow-row">
           <Label htmlFor="projectCode">Project Code</Label>
           <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
@@ -97,13 +105,13 @@ export default function PaymentForm() {
                 {projectCode
                   ? projectCodes.find((code) => code.value === projectCode)
                       ?.label
-                  : "Select project code..."}
+                  : "Pilih kode project ..."}
                 <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-full p-0">
               <Command>
-                <CommandInput placeholder="Search project code..." />
+                <CommandInput placeholder="Cari kode project ..." />
                 <CommandEmpty>No project code found.</CommandEmpty>
                 <CommandGroup>
                   {projectCodes.map((code) => (
@@ -132,10 +140,30 @@ export default function PaymentForm() {
             </PopoverContent>
           </Popover>
         </div>
+        <div className="space-y-2">
+          <Label htmlFor="amount">Biaya (dalam rupiah)</Label>
+          <Input
+            id="amount"
+            type="string"
+            value={amount.formatted}
+            onChange={(e) =>
+              setAmount({
+                value: parseCurrency(e.target.value),
+                formatted: formatCurrency(e.target.value),
+              })
+            }
+            placeholder="Masukkan biaya"
+            required
+          />
+        </div>
 
         <div className="space-y-2">
           <Label htmlFor="category">Category</Label>
-          <Select value={category} onValueChange={setCategory} required>
+          <Select
+            value={category}
+            onValueChange={(value: "debit" | "credit") => setCategory(value)}
+            required
+          >
             <SelectTrigger id="category">
               <SelectValue placeholder="Select category" />
             </SelectTrigger>
@@ -146,13 +174,13 @@ export default function PaymentForm() {
           </Select>
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-2 col-span-full">
           <Label htmlFor="description">Description</Label>
           <Textarea
             id="description"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            placeholder="Enter payment description"
+            placeholder="Deskripsi biaya"
           />
         </div>
       </div>
