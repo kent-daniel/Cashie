@@ -12,20 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-} from "@/components/ui/command";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { Check, ChevronsUpDown } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { ComboboxDemo } from "./combobox";
 
 const projectCodes = [
   { value: "PC001", label: "Project Alpha" },
@@ -41,7 +28,7 @@ type Amount = {
 };
 
 export default function PaymentForm() {
-  const [amount, setAmount] = useState<Amount>({ value: 0, formatted: "Rp" });
+  const [amount, setAmount] = useState<Amount>({ value: 0, formatted: "Rp " });
   const [projectCode, setProjectCode] = useState<string>("");
   const [category, setCategory] = useState<"debit" | "credit">("debit");
   const [description, setDescription] = useState("");
@@ -92,54 +79,11 @@ export default function PaymentForm() {
       className="space-y-6 max-w-4xl mx-auto p-6 rounded-lg shadow"
     >
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="space-y-2 grid-flow-row">
-          <Label htmlFor="projectCode">Project Code</Label>
-          <Popover open={open} onOpenChange={setOpen}>
-            <PopoverTrigger asChild>
-              <Button
-                variant="outline"
-                role="combobox"
-                aria-expanded={open}
-                className="w-full justify-between"
-              >
-                {projectCode
-                  ? projectCodes.find((code) => code.value === projectCode)
-                      ?.label
-                  : "Pilih kode project ..."}
-                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-full p-0">
-              <Command>
-                <CommandInput placeholder="Cari kode project ..." />
-                <CommandEmpty>No project code found.</CommandEmpty>
-                <CommandGroup>
-                  {projectCodes.map((code) => (
-                    <CommandItem
-                      key={code.value}
-                      onSelect={() => {
-                        setProjectCode(
-                          code.value === projectCode ? "" : code.value
-                        );
-                        setOpen(false);
-                      }}
-                    >
-                      <Check
-                        className={cn(
-                          "mr-2 h-4 w-4",
-                          projectCode === code.value
-                            ? "opacity-100"
-                            : "opacity-0"
-                        )}
-                      />
-                      {code.label}
-                    </CommandItem>
-                  ))}
-                </CommandGroup>
-              </Command>
-            </PopoverContent>
-          </Popover>
+        <div className="space-y-2">
+          <Label htmlFor="amount">Kode Project</Label>
+          <ComboboxDemo />
         </div>
+
         <div className="space-y-2">
           <Label htmlFor="amount">Biaya (dalam rupiah)</Label>
           <Input
