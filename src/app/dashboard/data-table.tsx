@@ -34,6 +34,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import DatePicker from "./components/date-picker";
 
 const data: Payment[] = [
   {
@@ -257,8 +258,8 @@ export function DataTableDemo() {
 
   return (
     <div className="w-full">
-      <div className="flex items-center py-4">
-        <div className="relative">
+      <div className="flex flex-col sm:flex-row justify-between gap-6 items-center py-4">
+        <div className="relative w-full sm:w-auto">
           <Input
             id="projectCodeFilterInput"
             placeholder="Cari kode project..."
@@ -271,7 +272,7 @@ export function DataTableDemo() {
                 .getColumn("projectCode")
                 ?.setFilterValue(event.target.value);
             }}
-            className="max-w-sm pr-10"
+            className="w-full max-w-sm pr-10"
           />
           <button
             className="absolute inset-y-0 right-0 px-2 py-1 text-gray-500/50 hover:text-gray-500"
@@ -282,33 +283,12 @@ export function DataTableDemo() {
             <XIcon className="h-5 w-5" />
           </button>
         </div>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
-              Columns <ChevronDown className="ml-2 h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {table
-              .getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className="capitalize"
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) =>
-                      column.toggleVisibility(!!value)
-                    }
-                  >
-                    {column.id}
-                  </DropdownMenuCheckboxItem>
-                );
-              })}
-          </DropdownMenuContent>
-        </DropdownMenu>
+
+        <div className="w-full sm:w-3/12 sm:min-w-[350px]">
+          <DatePicker />
+        </div>
       </div>
+
       <div className="rounded-md border">
         <Table>
           <TableHeader>
