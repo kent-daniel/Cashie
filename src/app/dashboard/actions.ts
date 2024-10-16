@@ -68,11 +68,6 @@ export const addNewPaymentEntry = async ({
 
 export const getPayments = async (): Promise<Payment[]> => {
   try {
-    const email = await getEmailFromKinde();
-    if (!email) {
-      throw new Error("User email not found");
-    }
-
     const payments = await getAllPayments();
 
     return payments.map(mapToPresentationPayment);
