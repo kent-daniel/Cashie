@@ -13,7 +13,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { ArrowUpDown, ChevronDown, MoreHorizontal, XIcon } from "lucide-react";
+import { ArrowUpDown, MoreHorizontal, XIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -285,7 +285,7 @@ export function DataTableDemo() {
         </div>
 
         <div className="w-full sm:w-3/12 sm:min-w-[350px]">
-          <DatePicker />
+          {/* <DatePicker setDateRange={}/> */}
         </div>
       </div>
 

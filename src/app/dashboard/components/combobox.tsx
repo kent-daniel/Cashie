@@ -18,46 +18,37 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Input } from "@/components/ui/input";
+import { getUniqueProjectCodes } from "@/data-access/payment";
 
-const frameworks = [
-  {
-    value: "next.js",
-    label: "Next.js",
-  },
-  {
-    value: "sveltekit",
-    label: "SvelteKit",
-  },
-  {
-    value: "nuxt.js",
-    label: "Nuxt.js",
-  },
-  {
-    value: "remix",
-    label: "Remix",
-  },
-  {
-    value: "astro",
-    label: "Astro",
-  },
-];
-
-export function ComboboxDemo() {
+export function ProjectCodeCombobox({
+  setProjectCode,
+}: {
+  setProjectCode: (code: string) => void;
+}) {
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState("");
   const [inputValue, setInputValue] = React.useState("");
-  const [isCustom, setIsCustom] = React.useState(false);
+  const [projectCodes, setProjectCodes] = React.useState<string[]>([]);
+
+  // fetch unique project codes
+  React.useEffect(() => {
+    const fetchProjectCodes = async () => {
+      const codes = await getUniqueProjectCodes();
+      setProjectCodes(codes);
+    };
+
+    fetchProjectCodes();
+  }, []);
 
   const handleSelect = (currentValue: string) => {
     setValue(currentValue === value ? "" : currentValue);
-    setIsCustom(false);
+    setProjectCode(currentValue);
     setOpen(false);
   };
 
   const handleCustomSelect = () => {
     setValue(inputValue);
-    setIsCustom(true);
+    setProjectCode(inputValue);
     setOpen(false);
   };
 
@@ -82,23 +73,23 @@ export function ComboboxDemo() {
             onValueChange={setInputValue}
           />
           <CommandList>
-            {frameworks.filter((fw) =>
-              fw.label.toLowerCase().includes(inputValue.toLowerCase())
+            {projectCodes.filter((code) =>
+              code.toLowerCase().includes(inputValue.toLowerCase())
             ).length ? (
               <CommandGroup>
-                {frameworks.map((framework) => (
+                {projectCodes.map((code) => (
                   <CommandItem
-                    key={framework.value}
-                    value={framework.value}
-                    onSelect={() => handleSelect(framework.value)}
+                    key={code}
+                    value={code}
+                    onSelect={() => handleSelect(code)}
                   >
                     <Check
                       className={cn(
                         "mr-2 h-4 w-4",
-                        value === framework.value ? "opacity-100" : "opacity-0"
+                        value === code ? "opacity-100" : "opacity-0"
                       )}
                     />
-                    {framework.label}
+                    {code}
                   </CommandItem>
                 ))}
               </CommandGroup>

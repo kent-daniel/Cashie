@@ -1,9 +1,16 @@
 "use client";
 import React, { useState } from "react";
 import Datepicker from "react-tailwindcss-datepicker";
-
-const DatePicker = () => {
-  const [value, setValue] = useState({
+export type DateRange = {
+  startDate: null | Date;
+  endDate: null | Date;
+};
+const DatePicker = ({
+  setDateRange,
+}: {
+  setDateRange: (dateRange: DateRange) => void;
+}) => {
+  const [value, setValue] = useState<DateRange>({
     startDate: null,
     endDate: null,
   });
@@ -25,7 +32,10 @@ const DatePicker = () => {
         },
       }}
       value={value}
-      onChange={(newValue) => setValue(newValue)}
+      onChange={(newValue) => {
+        setValue(newValue as DateRange);
+        setDateRange(newValue as DateRange);
+      }}
       showShortcuts={true}
     />
   );

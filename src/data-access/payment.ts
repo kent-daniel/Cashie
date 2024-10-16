@@ -1,3 +1,4 @@
+"use server";
 import { db } from "@/db/index";
 import { payments } from "@/models/payment";
 import { eq } from "drizzle-orm";
@@ -12,7 +13,7 @@ interface PaymentData {
 }
 
 // Helper function to convert date to string if necessary
-const preparePaymentData = (paymentData: PaymentData) => {
+const toDomainPaymentData = (paymentData: PaymentData) => {
   return {
     ...paymentData,
     date:
@@ -25,7 +26,7 @@ const preparePaymentData = (paymentData: PaymentData) => {
 
 // Create a new payment
 export const createPayment = async (paymentData: PaymentData) => {
-  const preparedData = preparePaymentData(paymentData);
+  const preparedData = toDomainPaymentData(paymentData);
   const result = await db.insert(payments).values(preparedData);
   return result;
 };
@@ -44,7 +45,7 @@ export const getPaymentById = async (id: number) => {
 
 // Update a payment by ID
 export const updatePayment = async (id: number, paymentData: PaymentData) => {
-  const preparedData = preparePaymentData(paymentData);
+  const preparedData = toDomainPaymentData(paymentData);
   const result = await db
     .update(payments)
     .set(preparedData)
@@ -56,4 +57,16 @@ export const updatePayment = async (id: number, paymentData: PaymentData) => {
 export const deletePayment = async (id: number) => {
   const result = await db.delete(payments).where(eq(payments.id, id)); // Use eq instead of equals
   return result;
+};
+
+// get unique project codes
+export const getUniqueProjectCodes = async () => {
+  const result = await db
+    .select({
+      projectCode: payments.projectCode,
+    })
+    .from(payments)
+    .groupBy(payments.projectCode); // Group by projectCode to ensure uniqueness
+
+  return result.map((payment) => payment.projectCode);
 };
