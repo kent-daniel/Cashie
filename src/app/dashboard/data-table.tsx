@@ -33,49 +33,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import DatePicker from "./components/date-picker";
-
-const data: Payment[] = [
-  {
-    amount: 316000,
-
-    email: "ken99@yahoo.com",
-    projectCode: "PC001", // Added projectCode
-    category: "credit", // Added category
-    date: new Date("2023-01-01"), // Added date
-  },
-  {
-    amount: 242000,
-
-    email: "Abe45@gmail.com",
-    projectCode: "PC002", // Added projectCode
-    category: "debit", // Added category
-    date: new Date("2023-01-02"), // Added date
-  },
-  {
-    amount: 83007,
-    email: "Monserrat44@gmail.com",
-    projectCode: "PC003", // Added projectCode
-    category: "credit", // Added category
-    date: new Date("2023-01-03"), // Added date
-  },
-  {
-    amount: 8704,
-    email: "Silas22@gmail.com",
-    projectCode: "PC004", // Added projectCode
-    category: "debit", // Added category
-    date: new Date("2023-01-04"), // Added date
-    description: "Pembayaran untuk proyek PC004", // Added description
-  },
-  {
-    amount: 72100,
-    email: "carmella@hotmail.com",
-    projectCode: "PC005", // Added projectCode
-    category: "credit", // Added category
-    date: new Date("2023-01-05"), // Added date
-    description: "Pembayaran untuk proyek PC001", // Added description
-  },
-];
+// import DatePicker from "./components/date-picker";
 
 export type Payment = {
   projectCode: string;
