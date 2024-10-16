@@ -1,11 +1,11 @@
 "use server";
 import { db } from "@/db/index";
 import { payments } from "@/models/payment";
-import { eq } from "drizzle-orm";
+import { eq, desc } from "drizzle-orm";
 
 interface PaymentData {
   projectCode: string; // Required field
-  amount: string; // Change from number to string to match DB type
+  amount: string;
   description?: string; // Optional
   category: string; // Required field
   date: Date | string; // Allow both Date and string here
@@ -33,7 +33,7 @@ export const createPayment = async (paymentData: PaymentData) => {
 
 // Get all payments
 export const getAllPayments = async () => {
-  const result = await db.select().from(payments);
+  const result = await db.select().from(payments).orderBy(desc(payments.id));
   return result;
 };
 

@@ -1,8 +1,10 @@
 import React from "react";
-import { DataTableDemo } from "./data-table";
+import { PaymentTable } from "./data-table";
 import PaymentForm from "./components/input-form";
+import { getPayments } from "./actions";
 
-const page = () => {
+const page = async () => {
+  const payments = await getPayments();
   return (
     <div className="p-10">
       <h1 className="text-2xl font-bold text-center ">
@@ -14,7 +16,7 @@ const page = () => {
         }).format(new Date())}
       </h1>
       <PaymentForm />
-      <DataTableDemo />
+      <PaymentTable data={payments} />
     </div>
   );
 };

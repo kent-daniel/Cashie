@@ -18,7 +18,6 @@ import { ArrowUpDown, MoreHorizontal, XIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
-  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
@@ -228,7 +227,7 @@ export const columns: ColumnDef<Payment>[] = [
   },
 ];
 
-export function DataTableDemo() {
+export function PaymentTable({ data }: { data: Payment[] }) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -285,7 +284,7 @@ export function DataTableDemo() {
         </div>
 
         <div className="w-full sm:w-3/12 sm:min-w-[350px]">
-          {/* <DatePicker setDateRange={}/> */}
+          {/* <DatePicker setDateRange={} /> */}
         </div>
       </div>
 
