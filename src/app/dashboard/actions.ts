@@ -1,9 +1,17 @@
 "use server";
 
-import { createPayment, getAllPayments } from "@/data-access/payment";
+import { Payment, createPayment, getAllPayments } from "@/data-access/payment";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { revalidatePath } from "next/cache";
-import { Payment } from "./data-table";
+
+export type PaymentPresentationDTO = {
+  amount: number;
+  projectCode: string;
+  category: "debit" | "credit" | "saldo awal";
+  description: string;
+  date: Date;
+  email: string;
+};
 
 const getEmailFromKinde = async (): Promise<string | null> => {
   const { getUser } = getKindeServerSession();
@@ -15,19 +23,14 @@ const getEmailFromKinde = async (): Promise<string | null> => {
   return user.email;
 };
 
-const mapToPresentationPayment = (data: {
-  amount: string;
-  projectCode: string;
-  category: string;
-  description: string | null;
-  date: string;
-  id: number;
-  email: string;
-}): Payment => ({
-  amount: parseFloat(data.amount), // Convert amount from string to number
+const mapToPresentationPayment = (data: Payment): PaymentPresentationDTO => ({
+  amount: data.amount,
   projectCode: data.projectCode,
-  category: data.category as "debit" | "credit", // Ensure category is of the right type
-  description: data.description as string,
+  category:
+    data.category === "saldo"
+      ? "saldo awal"
+      : (data.category as "debit" | "credit"),
+  description: data.description ?? "", // Default to empty string if null
   date: new Date(data.date),
   email: data.email,
 });
@@ -66,7 +69,7 @@ export const addNewPaymentEntry = async ({
   }
 };
 
-export const getPayments = async (): Promise<Payment[]> => {
+export const getPayments = async (): Promise<PaymentPresentationDTO[]> => {
   try {
     const payments = await getAllPayments();
 

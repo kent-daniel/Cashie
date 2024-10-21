@@ -12,6 +12,15 @@ interface PaymentData {
   email: string; // Required field
 }
 
+export type Payment = {
+  projectCode: string;
+  amount: number;
+  description?: string;
+  category: "debit" | "credit" | "saldo";
+  date: Date;
+  email: string;
+};
+
 // Helper function to convert date to string if necessary
 const toDomainPaymentData = (paymentData: PaymentData) => {
   return {
@@ -24,6 +33,16 @@ const toDomainPaymentData = (paymentData: PaymentData) => {
   };
 };
 
+const toModelPayment = (payment: any): Payment => {
+  return {
+    projectCode: payment.projectCode,
+    amount: parseFloat(payment.amount),
+    description: payment.description ?? "",
+    category: payment.category as "debit" | "credit" | "saldo",
+    date: new Date(payment.date),
+    email: payment.email,
+  };
+};
 // Create a new payment
 export const createPayment = async (paymentData: PaymentData) => {
   const preparedData = toDomainPaymentData(paymentData);
@@ -32,9 +51,9 @@ export const createPayment = async (paymentData: PaymentData) => {
 };
 
 // Get all payments
-export const getAllPayments = async () => {
+export const getAllPayments = async (): Promise<Payment[]> => {
   const result = await db.select().from(payments).orderBy(desc(payments.id));
-  return result;
+  return result.map(toModelPayment); // Map to model format
 };
 
 // Get a payment by ID

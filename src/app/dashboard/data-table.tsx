@@ -33,25 +33,25 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-// import DatePicker from "./components/date-picker";
+import PageSizeSelector from "./components/page-size-selector";
+import { PaymentPresentationDTO } from "./actions";
 
-export type Payment = {
-  projectCode: string;
-  amount: number;
-  description?: string;
-  category: "debit" | "credit" | "saldo";
-  date: Date;
-  email: string;
-};
-
-export const columns: ColumnDef<Payment>[] = [
+export const columns: ColumnDef<PaymentPresentationDTO>[] = [
   {
     accessorKey: "date",
-    header: () => {
-      return <p>Tanggal</p>;
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Tanggal
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
     },
     cell: ({ row }) => (
-      <div className="lowercase">
+      <div className="lowercase p-2">
         {(row.getValue("date") as Date).toLocaleDateString()}
       </div>
     ),
@@ -173,9 +173,11 @@ export const columns: ColumnDef<Payment>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(payment.projectCode)}
+              onClick={() => {
+                navigator.clipboard.writeText(payment.projectCode);
+              }}
             >
-              Copy payment ID
+              Copy kode project
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem>View customer</DropdownMenuItem>
@@ -187,7 +189,7 @@ export const columns: ColumnDef<Payment>[] = [
   },
 ];
 
-export function PaymentTable({ data }: { data: Payment[] }) {
+export function PaymentTable({ data }: { data: PaymentPresentationDTO[] }) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -207,6 +209,11 @@ export function PaymentTable({ data }: { data: Payment[] }) {
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
+    initialState: {
+      pagination: {
+        pageSize: 20,
+      },
+    },
     state: {
       sorting,
       columnFilters,
@@ -298,10 +305,12 @@ export function PaymentTable({ data }: { data: Payment[] }) {
           </TableBody>
         </Table>
       </div>
-      <div className="flex items-center justify-end space-x-2 py-4">
+
+      <div className="flex items-center justify-end space-x-2 py-4 ">
+        <p>Tampilkan baris : </p>
+        <PageSizeSelector table={table} className="fl" />
         <div className="flex-1 text-sm text-muted-foreground">
-          {table.getFilteredSelectedRowModel().rows.length} of{" "}
-          {table.getFilteredRowModel().rows.length} row(s) selected.
+          {table.getFilteredRowModel().rows.length} hasil.
         </div>
         <div className="space-x-2">
           <Button
