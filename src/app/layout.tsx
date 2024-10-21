@@ -19,6 +19,8 @@ export const metadata: Metadata = {
   description: "Portal keuangan",
 };
 
+export const revalidate = 3600; // revalidate at most every hour
+
 export default function RootLayout({
   children,
 }: Readonly<{
