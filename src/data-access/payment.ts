@@ -33,7 +33,7 @@ const toDomainPaymentData = (paymentData: PaymentData) => {
   };
 };
 
-const toModelPayment = (payment: any): Payment => {
+const toModelPayment = (payment: typeof payments.$inferSelect): Payment => {
   return {
     projectCode: payment.projectCode,
     amount: parseFloat(payment.amount),
