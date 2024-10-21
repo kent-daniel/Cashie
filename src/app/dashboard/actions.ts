@@ -59,7 +59,7 @@ export const addNewPaymentEntry = async ({
     };
 
     await createPayment(paymentData);
-    revalidatePath("/");
+    revalidatePath("/", "layout");
   } catch (error) {
     console.error("Error adding new payment entry:", error);
     throw error;
