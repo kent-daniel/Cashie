@@ -39,7 +39,7 @@ export type Payment = {
   projectCode: string;
   amount: number;
   description?: string;
-  category: "debit" | "credit";
+  category: "debit" | "credit" | "saldo";
   date: Date;
   email: string;
 };
@@ -138,7 +138,9 @@ export const columns: ColumnDef<Payment>[] = [
           className={`rounded-xl font-semibold border ${
             row.getValue("category") === "debit"
               ? "bg-green-100 text-green-500 border-green-500 dark:bg-green-700/50 dark:text-green-500 dark:border-green-500"
-              : "bg-red-100 text-red-500 border-red-500 dark:bg-red-900/70 dark:text-red-500 dark:border-red-500"
+              : row.getValue("category") === "credit"
+              ? "bg-red-100 text-red-500 border-red-500 dark:bg-red-900/70 dark:text-red-500 dark:border-red-500"
+              : "bg-yellow-100 text-yellow-500 border-yellow-500 dark:bg-yellow-700/50 dark:text-yellow-500 dark:border-yellow-500" // Style for saldo
           }`}
         >
           {row.getValue("category")}

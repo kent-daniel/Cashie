@@ -58,7 +58,9 @@ export default function PaymentForm() {
   const formRef = React.useRef<HTMLFormElement>(null);
   const [amount, setAmount] = useState<Amount>({ value: 0, formatted: "Rp " });
   const [projectCode, setProjectCode] = useState<string>("");
-  const [category, setCategory] = useState<"debit" | "credit">("debit");
+  const [category, setCategory] = useState<"debit" | "credit" | "saldo">(
+    "debit"
+  );
   const [description, setDescription] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -132,7 +134,9 @@ export default function PaymentForm() {
             <Label htmlFor="category">Kategori</Label>
             <Select
               value={category}
-              onValueChange={(value: "debit" | "credit") => setCategory(value)}
+              onValueChange={(value: "debit" | "credit" | "saldo") =>
+                setCategory(value)
+              }
               required // Make this field required
             >
               <SelectTrigger id="category">
@@ -141,6 +145,7 @@ export default function PaymentForm() {
               <SelectContent>
                 <SelectItem value="credit">Credit</SelectItem>
                 <SelectItem value="debit">Debit</SelectItem>
+                <SelectItem value="saldo">Saldo</SelectItem>
               </SelectContent>
             </Select>
           </div>
