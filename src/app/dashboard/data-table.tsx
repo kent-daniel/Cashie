@@ -24,7 +24,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
 import {
   Table,
   TableBody,
@@ -33,8 +32,15 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import PageSizeSelector from "./components/page-size-selector";
-import { PaymentPresentationDTO } from "./actions";
+import {
+  PaymentPresentationDTO,
+  Stats,
+  getStatsByProjectCode,
+} from "./actions";
+import { useEffect } from "react";
+import { debounce } from "lodash";
+import ProjectFilterInput from "./components/project-filter-input";
+import TableFooter from "./components/TableFooter";
 
 export const columns: ColumnDef<PaymentPresentationDTO>[] = [
   {
@@ -197,6 +203,14 @@ export function PaymentTable({ data }: { data: PaymentPresentationDTO[] }) {
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
+  const [stats, setStats] = React.useState<Stats>({
+    totalDebit: 0,
+    totalCredit: 0,
+  });
+
+  const handleProjectSearchInputChanged = debounce(() => {
+    fetchTotalDebitCredit(columnFilters);
+  }, 500);
 
   const table = useReactTable({
     data,
@@ -222,34 +236,31 @@ export function PaymentTable({ data }: { data: PaymentPresentationDTO[] }) {
     },
   });
 
+  const fetchTotalDebitCredit = async (filters: ColumnFiltersState) => {
+    try {
+      // Log the filters for debugging
+      if (filters[0].id !== "projectCode") return;
+
+      await getStatsByProjectCode(filters[0].value as string);
+    } catch (error) {
+      console.error("Error fetching filtered payments:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchTotalDebitCredit(columnFilters);
+    return () => {
+      setStats({ totalDebit: 0, totalCredit: 0 });
+    };
+  }, [columnFilters]);
+
   return (
     <div className="w-full">
       <div className="flex flex-col sm:flex-row justify-between gap-6 items-center py-4">
-        <div className="relative w-full sm:w-auto">
-          <Input
-            id="projectCodeFilterInput"
-            placeholder="Cari kode project..."
-            value={
-              (table.getColumn("projectCode")?.getFilterValue() as string) ?? ""
-            }
-            onChange={(event) => {
-              console.log(event);
-              table
-                .getColumn("projectCode")
-                ?.setFilterValue(event.target.value);
-            }}
-            className="w-full max-w-sm pr-10"
-          />
-          <button
-            className="absolute inset-y-0 right-0 px-2 py-1 text-gray-500/50 hover:text-gray-500"
-            onClick={() => {
-              table.getColumn("projectCode")?.setFilterValue("");
-            }}
-          >
-            <XIcon className="h-5 w-5" />
-          </button>
-        </div>
-
+        <ProjectFilterInput
+          table={table}
+          onInputChanged={handleProjectSearchInputChanged}
+        />
         <div className="w-full sm:w-3/12 sm:min-w-[350px]">
           {/* <DatePicker setDateRange={} /> */}
         </div>
@@ -306,31 +317,7 @@ export function PaymentTable({ data }: { data: PaymentPresentationDTO[] }) {
         </Table>
       </div>
 
-      <div className="flex items-center justify-end space-x-2 py-4 ">
-        <p>Tampilkan baris : </p>
-        <PageSizeSelector table={table} className="fl" />
-        <div className="flex-1 text-sm text-muted-foreground">
-          {table.getFilteredRowModel().rows.length} hasil.
-        </div>
-        <div className="space-x-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            Previous
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            Next
-          </Button>
-        </div>
-      </div>
+      <TableFooter table={table} />
     </div>
   );
 }

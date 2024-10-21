@@ -1,7 +1,7 @@
 "use server";
 import { db } from "@/db/index";
 import { payments } from "@/models/payment";
-import { eq, desc } from "drizzle-orm";
+import { eq, desc, sql } from "drizzle-orm";
 
 interface PaymentData {
   projectCode: string; // Required field
@@ -88,4 +88,31 @@ export const getUniqueProjectCodes = async () => {
     .groupBy(payments.projectCode); // Group by projectCode to ensure uniqueness
 
   return result.map((payment) => payment.projectCode);
+};
+
+// Get total credit and debit for a specific project code
+export const getTotalProjectCreditDebit = async (projectCode: string) => {
+  const result = await db
+    .select({
+      projectCode: payments.projectCode,
+      totalCredit: sql`SUM(CASE WHEN category = 'credit' THEN amount ELSE 0 END)`, // Total for credit
+      totalDebit: sql`SUM(CASE WHEN category = 'debit' THEN amount ELSE 0 END)`, // Total for debit
+    })
+    .from(payments)
+    .where(eq(payments.projectCode, projectCode)) // Filter by projectCode
+    .groupBy(payments.projectCode); // Group by projectCode
+
+  if (result.length === 0) {
+    return {
+      totalCredit: 0,
+      totalDebit: 0,
+    };
+  }
+
+  console.log(result);
+
+  return {
+    totalCredit: parseFloat(result[0].totalCredit) || 0, // Convert to number and handle potential nulls
+    totalDebit: parseFloat(result[0].totalDebit) || 0, // Convert to number and handle potential nulls
+  };
 };
