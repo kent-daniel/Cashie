@@ -13,7 +13,12 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { ArrowUpDown, MoreHorizontal, XIcon } from "lucide-react";
+import {
+  ArrowUpDown,
+  ChartColumnIcon,
+  MoreHorizontal,
+  XIcon,
+} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -37,8 +42,6 @@ import {
   Stats,
   getStatsByProjectCode,
 } from "./actions";
-import { useEffect } from "react";
-import { debounce } from "lodash";
 import ProjectFilterInput from "./components/project-filter-input";
 import TableFooter from "./components/TableFooter";
 
@@ -208,10 +211,6 @@ export function PaymentTable({ data }: { data: PaymentPresentationDTO[] }) {
     totalCredit: 0,
   });
 
-  const handleProjectSearchInputChanged = debounce(() => {
-    fetchTotalDebitCredit(columnFilters);
-  }, 500);
-
   const table = useReactTable({
     data,
     columns,
@@ -238,29 +237,40 @@ export function PaymentTable({ data }: { data: PaymentPresentationDTO[] }) {
 
   const fetchTotalDebitCredit = async (filters: ColumnFiltersState) => {
     try {
-      // Log the filters for debugging
       if (filters[0].id !== "projectCode") return;
 
-      await getStatsByProjectCode(filters[0].value as string);
+      const stats = await getStatsByProjectCode(filters[0].value as string);
+      if (!stats) return;
+      setStats(stats);
     } catch (error) {
       console.error("Error fetching filtered payments:", error);
     }
   };
 
-  useEffect(() => {
-    fetchTotalDebitCredit(columnFilters);
-    return () => {
-      setStats({ totalDebit: 0, totalCredit: 0 });
-    };
-  }, [columnFilters]);
-
   return (
     <div className="w-full">
       <div className="flex flex-col sm:flex-row justify-between gap-6 items-center py-4">
-        <ProjectFilterInput
-          table={table}
-          onInputChanged={handleProjectSearchInputChanged}
-        />
+        <div className="flex gap-3">
+          <ProjectFilterInput table={table} />
+          <Button
+            variant={"outline"}
+            className="gap-2"
+            onClick={() => fetchTotalDebitCredit(columnFilters)}
+          >
+            Get Stats <ChartColumnIcon size={15} />
+          </Button>
+        </div>
+        <div>
+          {!(stats.totalCredit === 0 && stats.totalDebit === 0) && (
+            <div>
+              <span className="text-red-500">Credit: {stats.totalCredit}</span>
+              <span className="ml-4 text-green-500">
+                Debit: {stats.totalDebit}
+              </span>
+            </div>
+          )}
+        </div>
+
         <div className="w-full sm:w-3/12 sm:min-w-[350px]">
           {/* <DatePicker setDateRange={} /> */}
         </div>

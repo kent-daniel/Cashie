@@ -13,7 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ProjectCodeCombobox } from "./combobox";
-import { addNewPaymentEntry } from "../actions";
+import { addNewPaymentEntry, formatCurrency, parseCurrency } from "../actions";
 import React from "react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css"; // Import toast styles
@@ -21,20 +21,6 @@ import "react-toastify/dist/ReactToastify.css"; // Import toast styles
 type Amount = {
   value: number;
   formatted: string;
-};
-
-const formatCurrency = (value: string) => {
-  const formattedValue = value
-    .replace(/\D/g, "") // Remove non-digit characters
-    .replace(/\B(?=(\d{3})+(?!\d))/g, ","); // Add thousands separator
-  return "Rp " + formattedValue; // Add "Rp" as a prefix
-};
-
-const parseCurrency = (value: string) => {
-  const numericValue = value
-    .replace(/Rp\s?|,/g, "") // Remove "Rp" prefix and commas
-    .trim(); // Trim any whitespace
-  return Number(numericValue); // Convert to number
 };
 
 const validateFields = (

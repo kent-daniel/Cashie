@@ -10,6 +10,20 @@ import {
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { revalidatePath } from "next/cache";
 
+export const formatCurrency = (value: string) => {
+  const formattedValue = value
+    .replace(/\D/g, "") // Remove non-digit characters
+    .replace(/\B(?=(\d{3})+(?!\d))/g, ","); // Add thousands separator
+  return "Rp " + formattedValue; // Add "Rp" as a prefix
+};
+
+export const parseCurrency = (value: string) => {
+  const numericValue = value
+    .replace(/Rp\s?|,/g, "") // Remove "Rp" prefix and commas
+    .trim(); // Trim any whitespace
+  return Number(numericValue); // Convert to number
+};
+
 export type PaymentPresentationDTO = {
   amount: number;
   projectCode: string;
@@ -20,8 +34,8 @@ export type PaymentPresentationDTO = {
 };
 
 export type Stats = {
-  totalDebit: number;
-  totalCredit: number;
+  totalDebit: string;
+  totalCredit: string;
 };
 
 const getEmailFromKinde = async (): Promise<string | null> => {
@@ -98,14 +112,16 @@ export const getStatsByProjectCode = async (
   try {
     const uniqueProjectCodes = await getUniqueProjectCodes();
 
-    // Check if the id is in the unique project codes
     if (!uniqueProjectCodes.includes(id)) {
       console.warn(`Project code ${id} not found in unique project codes.`);
-      return; // Return undefined if the project code is not valid
+      return;
     }
 
     const result = await getTotalProjectCreditDebit(id);
-    return result; // Return the result of total credit and debit
+    return {
+      totalCredit: formatCurrency(result.totalCredit.toString()),
+      totalDebit: formatCurrency(result.totalDebit.toString()),
+    };
   } catch (error) {
     console.error("Error getting stats by project code:", error);
     throw error; // Rethrow the error for further handling

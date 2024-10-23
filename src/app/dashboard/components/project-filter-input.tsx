@@ -7,13 +7,9 @@ import { PaymentPresentationDTO } from "../actions";
 
 interface ProjectFilterInputProps {
   table: Table<PaymentPresentationDTO>;
-  onInputChanged: (value: string) => void; // Function to call on input change
 }
 
-const ProjectFilterInput: React.FC<ProjectFilterInputProps> = ({
-  table,
-  onInputChanged,
-}) => {
+const ProjectFilterInput: React.FC<ProjectFilterInputProps> = ({ table }) => {
   const [inputValue, setInputValue] = useState<string>(
     (table.getColumn("projectCode")?.getFilterValue() as string) ?? ""
   );
@@ -22,13 +18,12 @@ const ProjectFilterInput: React.FC<ProjectFilterInputProps> = ({
   useEffect(() => {
     const handler = setTimeout(() => {
       table.getColumn("projectCode")?.setFilterValue(inputValue);
-      onInputChanged(inputValue); // Call the onInputChanged prop
     }, 300); // Adjust the delay as needed
 
     return () => {
       clearTimeout(handler);
     };
-  }, [inputValue, onInputChanged, table]); // Dependency array
+  }, [inputValue, table]); // Dependency array
 
   return (
     <div className="relative w-full sm:w-auto">
