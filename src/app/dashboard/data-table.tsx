@@ -207,8 +207,8 @@ export function PaymentTable({ data }: { data: PaymentPresentationDTO[] }) {
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
   const [stats, setStats] = React.useState<Stats>({
-    totalDebit: 0,
-    totalCredit: 0,
+    totalDebit: "",
+    totalCredit: "",
   });
 
   const table = useReactTable({
@@ -261,7 +261,9 @@ export function PaymentTable({ data }: { data: PaymentPresentationDTO[] }) {
           </Button>
         </div>
         <div>
-          {!(stats.totalCredit === 0 && stats.totalDebit === 0) && (
+          {!(
+            stats.totalCredit === undefined && stats.totalDebit === undefined
+          ) && (
             <div>
               <span className="text-red-500">Credit: {stats.totalCredit}</span>
               <span className="ml-4 text-green-500">
