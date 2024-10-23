@@ -109,10 +109,8 @@ export const getTotalProjectCreditDebit = async (projectCode: string) => {
     };
   }
 
-  console.log(result);
-
   return {
-    totalCredit: parseFloat(result[0].totalCredit) || 0, // Convert to number and handle potential nulls
-    totalDebit: parseFloat(result[0].totalDebit) || 0, // Convert to number and handle potential nulls
+    totalCredit: parseFloat(result[0].totalCredit as string) || 0, // Convert to number and handle potential nulls
+    totalDebit: parseFloat(result[0].totalDebit as string) || 0, // Convert to number and handle potential nulls
   };
 };
