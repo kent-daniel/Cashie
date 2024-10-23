@@ -13,10 +13,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ProjectCodeCombobox } from "./combobox";
-import { addNewPaymentEntry, formatCurrency, parseCurrency } from "../actions";
+import { addNewPaymentEntry } from "../actions";
 import React from "react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css"; // Import toast styles
+import { parseCurrency, formatCurrency } from "../utils";
 
 type Amount = {
   value: number;
