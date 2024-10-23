@@ -13,8 +13,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { ArrowUpDown, ChartColumnIcon, MoreHorizontal } from "lucide-react";
-
+import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -32,13 +31,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  PaymentPresentationDTO,
-  Stats,
-  getStatsByProjectCode,
-} from "./actions";
-import ProjectFilterInput from "./components/project-filter-input";
+import { PaymentPresentationDTO } from "./actions";
 import TableFooter from "./components/TableFooter";
+import ProjectCodeCell from "./components/data-table/projectCodeCell";
+import TableMenu from "./components/data-table/TableMenuHeader";
 
 export const columns: ColumnDef<PaymentPresentationDTO>[] = [
   {
@@ -66,34 +62,7 @@ export const columns: ColumnDef<PaymentPresentationDTO>[] = [
     header: () => <p>Kode Project</p>,
     cell: ({ row }) => {
       const projectCode = row.getValue("projectCode") as string;
-      return (
-        <div
-          className="text-start cursor-pointer underline underline-offset-4"
-          onClick={() => {
-            // Query select by id to set the filter value for the input
-            const inputElement = document.getElementById(
-              "projectCodeFilterInput"
-            ) as HTMLInputElement;
-            if (inputElement) {
-              // Create an event that triggers the 'input' change
-              const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
-                window.HTMLInputElement.prototype,
-                "value"
-              )?.set;
-
-              if (nativeInputValueSetter) {
-                nativeInputValueSetter.call(inputElement, projectCode); // Set the value of the input
-
-                // Create and dispatch the event to simulate a user input change
-                const event = new Event("input", { bubbles: true });
-                inputElement.dispatchEvent(event);
-              }
-            }
-          }}
-        >
-          {projectCode}
-        </div>
-      );
+      return <ProjectCodeCell projectCode={projectCode} />;
     },
   },
   {
@@ -201,10 +170,6 @@ export function PaymentTable({ data }: { data: PaymentPresentationDTO[] }) {
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
-  const [stats, setStats] = React.useState<Stats>({
-    totalDebit: "",
-    totalCredit: "",
-  });
 
   const table = useReactTable({
     data,
@@ -230,49 +195,9 @@ export function PaymentTable({ data }: { data: PaymentPresentationDTO[] }) {
     },
   });
 
-  const fetchTotalDebitCredit = async (filters: ColumnFiltersState) => {
-    try {
-      if (filters[0].id !== "projectCode") return;
-
-      const stats = await getStatsByProjectCode(filters[0].value as string);
-      if (!stats) return;
-      setStats(stats);
-    } catch (error) {
-      console.error("Error fetching filtered payments:", error);
-    }
-  };
-
   return (
     <div className="w-full">
-      <div className="flex flex-col sm:flex-row justify-between gap-6 items-center py-4">
-        <div className="flex gap-3">
-          <ProjectFilterInput table={table} />
-          <Button
-            variant={"outline"}
-            className="gap-2"
-            onClick={() => fetchTotalDebitCredit(columnFilters)}
-          >
-            Get Stats <ChartColumnIcon size={15} />
-          </Button>
-        </div>
-        <div>
-          {!(
-            stats.totalCredit === undefined && stats.totalDebit === undefined
-          ) && (
-            <div>
-              <span className="text-red-500">Credit: {stats.totalCredit}</span>
-              <span className="ml-4 text-green-500">
-                Debit: {stats.totalDebit}
-              </span>
-            </div>
-          )}
-        </div>
-
-        <div className="w-full sm:w-3/12 sm:min-w-[350px]">
-          {/* <DatePicker setDateRange={} /> */}
-        </div>
-      </div>
-
+      <TableMenu table={table} columnFilters={columnFilters} />
       <div className="rounded-md border">
         <Table>
           <TableHeader>
