@@ -1,5 +1,4 @@
 import { Input } from "@/components/ui/input";
-import { Payment } from "@/data-access/payment";
 import { Table } from "@tanstack/react-table";
 import { XIcon } from "lucide-react";
 import React, { useEffect, useState } from "react";
