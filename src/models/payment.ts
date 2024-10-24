@@ -10,7 +10,7 @@ import {
 export const payments = pgTable("payments", {
   id: serial("id").primaryKey(), // Auto-incrementing ID
   projectCode: varchar("project_code", { length: 50 }).notNull(),
-  amount: decimal("amount", { precision: 10, scale: 2 }).notNull(),
+  amount: decimal("amount", { precision: 15, scale: 2 }).notNull(),
   description: text("description"),
   category: varchar("category", { length: 10 }).notNull(), // 'debit' or 'credit'
   date: date("date").notNull(),
