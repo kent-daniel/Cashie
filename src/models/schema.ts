@@ -40,12 +40,11 @@ export const projects = pgTable("projects", {
 // Define the `payments` table
 export const payments = pgTable("payments", {
   id: serial("id").primaryKey(),
-  projectId: integer("project_id")
-    .references(() => projects.id, {
+  projectCode: varchar("project_code", { length: 50 })
+    .references(() => projects.projectCode, {
       onDelete: "restrict",
     })
     .notNull(),
-  projectCode: varchar("project_code", { length: 50 }).notNull(), // No foreign key constraint
   amount: decimal("amount", { precision: 15, scale: 2 }).notNull(),
   description: text("description"),
   category: varchar("category", { length: 10 }).notNull(), // 'debit' or 'credit'
@@ -55,14 +54,14 @@ export const payments = pgTable("payments", {
 
 // Define Relations
 export const companiesRelations = relations(companies, ({ many }) => ({
-  projects: many(projects),
+  projects: many(projects), // Company has many projects
 }));
 
 export const projectsRelations = relations(projects, ({ one, many }) => ({
-  company: one(companies),
-  payments: many(payments, { relationName: "project_payments" }),
+  company: one(companies), // Project belongs to one company
+  payments: many(payments), // Project has many payments
 }));
 
 export const paymentsRelations = relations(payments, ({ one }) => ({
-  project: one(projects),
+  project: one(projects), // Payment belongs to one project
 }));
