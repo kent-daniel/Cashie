@@ -1,68 +1,116 @@
-import {
-  pgTable,
-  serial,
-  varchar,
-  decimal,
-  date,
-  text,
-  integer,
-} from "drizzle-orm/pg-core";
-import { relations } from "drizzle-orm";
+"use server";
+import { db } from "@/db/index";
+import { payments } from "@/models/schema";
+import { eq, desc, sql } from "drizzle-orm";
 
-// Define the `companies` table
-export const companies = pgTable("companies", {
-  id: serial("id").primaryKey(),
-  name: varchar("name", { length: 100 }).notNull(),
-});
+interface PaymentData {
+  projectCode: string; // Required field
+  amount: string;
+  description?: string; // Optional
+  category: string; // Required field
+  date: Date | string; // Allow both Date and string here
+  email: string; // Required field
+}
 
-// Define the `projects` table with foreign key to `companies`
-export const projects = pgTable("projects", {
-  id: serial("id").primaryKey(),
-  companyId: integer("company_id")
-    .references(() => companies.id, {
-      onDelete: "cascade",
+export type Payment = {
+  projectCode: string;
+  amount: number;
+  description?: string;
+  category: "debit" | "credit" | "saldo";
+  date: Date;
+  email: string;
+};
+
+// Helper function to convert date to string if necessary
+const toDomainPaymentData = (paymentData: PaymentData) => {
+  return {
+    ...paymentData,
+    date:
+      typeof paymentData.date === "string"
+        ? paymentData.date // Return the date as-is if it's already a string
+        : paymentData.date.toISOString().split("T")[0], // Convert Date to string in 'YYYY-MM-DD' format
+    amount: paymentData.amount.toString(), // Ensure amount is a string
+  };
+};
+
+const toModelPayment = (payment: typeof payments.$inferSelect): Payment => {
+  return {
+    projectCode: payment.projectCode,
+    amount: parseFloat(payment.amount),
+    description: payment.description ?? "",
+    category: payment.category as "debit" | "credit" | "saldo",
+    date: new Date(payment.date),
+    email: payment.email,
+  };
+};
+// Create a new payment
+export const createPayment = async (paymentData: PaymentData) => {
+  const preparedData = toDomainPaymentData(paymentData);
+  const result = await db.insert(payments).values(preparedData);
+  return result;
+};
+
+// Get all payments
+export const getAllPayments = async (): Promise<Payment[]> => {
+  const result = await db.select().from(payments).orderBy(desc(payments.id));
+  return result.map(toModelPayment); // Map to model format
+};
+
+// Get a payment by ID
+export const getPaymentById = async (id: number) => {
+  const result = await db.select().from(payments).where(eq(payments.id, id)); // Use eq instead of equals
+  return result;
+};
+
+// Update a payment by ID
+export const updatePayment = async (id: number, paymentData: PaymentData) => {
+  const preparedData = toDomainPaymentData(paymentData);
+  const result = await db
+    .update(payments)
+    .set(preparedData)
+    .where(eq(payments.id, id)); // Use eq instead of equals
+  return result;
+};
+
+// Delete a payment by ID
+export const deletePayment = async (id: number) => {
+  const result = await db.delete(payments).where(eq(payments.id, id)); // Use eq instead of equals
+  return result;
+};
+
+// get unique project codes
+export const getUniqueProjectCodes = async () => {
+  const result = await db
+    .select({
+      projectCode: payments.projectCode,
     })
-    .notNull(),
-  projectCode: varchar("project_code", { length: 50 }).notNull().unique(),
-  name: text("name"),
-  estimationBudget: decimal("estimation_budget", {
-    precision: 15,
-    scale: 2,
-  }).notNull(),
-  projectValue: decimal("project_value", {
-    precision: 15,
-    scale: 2,
-  }).notNull(),
-  category: varchar("category", { length: 10 }).notNull(),
-  date: date("date").notNull(),
-});
+    .from(payments)
+    .groupBy(payments.projectCode); // Group by projectCode to ensure uniqueness
 
-// Define the `payments` table
-export const payments = pgTable("payments", {
-  id: serial("id").primaryKey(),
-  projectId: integer("project_id")
-    .references(() => projects.id, {
-      onDelete: "restrict",
+  return result.map((payment) => payment.projectCode);
+};
+
+// Get total credit and debit for a specific project code
+export const getTotalProjectCreditDebit = async (projectCode: string) => {
+  const result = await db
+    .select({
+      projectCode: payments.projectCode,
+      totalCredit: sql`SUM(CASE WHEN category = 'credit' THEN amount ELSE 0 END)`, // Total for credit
+      totalDebit: sql`SUM(CASE WHEN category = 'debit' THEN amount ELSE 0 END)`, // Total for debit
     })
-    .notNull(),
-  projectCode: varchar("project_code", { length: 50 }).notNull(), // No foreign key constraint
-  amount: decimal("amount", { precision: 15, scale: 2 }).notNull(),
-  description: text("description"),
-  category: varchar("category", { length: 10 }).notNull(), // 'debit' or 'credit'
-  date: date("date").notNull(),
-  email: varchar("email", { length: 100 }).notNull(),
-});
+    .from(payments)
+    .where(eq(payments.projectCode, projectCode)) // Filter by projectCode
+    .groupBy(payments.projectCode); // Group by projectCode
 
-// Define Relations
-export const companiesRelations = relations(companies, ({ many }) => ({
-  projects: many(projects),
-}));
+  if (result.length === 0) {
+    return {
+      totalCredit: 0,
+      totalDebit: 0,
+    };
+  }
 
-export const projectsRelations = relations(projects, ({ one, many }) => ({
-  company: one(companies),
-  payments: many(payments, { relationName: "project_payments" }),
-}));
-
-export const paymentsRelations = relations(payments, ({ one }) => ({
-  project: one(projects),
-}));
+  return {
+    totalCredit: parseFloat(result[0].totalCredit as string) || 0, // Convert to number and handle potential nulls
+    totalDebit: parseFloat(result[0].totalDebit as string) || 0, // Convert to number and handle potential nulls
+  };
+};
