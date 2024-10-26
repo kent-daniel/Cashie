@@ -24,7 +24,7 @@ export const projects = pgTable("projects", {
     })
     .notNull(),
   projectCode: varchar("project_code", { length: 50 }).notNull().unique(),
-  name: text("name"),
+  name: text("name").notNull(),
   estimationBudget: decimal("estimation_budget", {
     precision: 15,
     scale: 2,
@@ -33,7 +33,6 @@ export const projects = pgTable("projects", {
     precision: 15,
     scale: 2,
   }).notNull(),
-  category: varchar("category", { length: 10 }).notNull(),
   date: date("date").notNull(),
 });
 
