@@ -31,10 +31,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { PaymentPresentationDTO } from "./actions";
-import TableFooter from "./components/TableFooter";
-import ProjectCodeCell from "./components/data-table/projectCodeCell";
-import TableMenu from "./components/data-table/TableMenuHeader";
+import { PaymentPresentationDTO } from "../actions";
+import TableFooter from "./TableFooter";
+import ProjectCodeCell from "./data-table/projectCodeCell";
+import TableMenu from "./data-table/TableMenuHeader";
 
 export const columns: ColumnDef<PaymentPresentationDTO>[] = [
   {
