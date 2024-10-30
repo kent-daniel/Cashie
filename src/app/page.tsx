@@ -3,6 +3,8 @@ import {
   RegisterLink,
   LoginLink,
 } from "@kinde-oss/kinde-auth-nextjs/components";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function Home() {
   return (
@@ -35,6 +37,9 @@ export default function Home() {
           Daftar Akun Baru
         </RegisterLink>
       </div>
+
+      {/* Toast Container */}
+      <ToastContainer />
     </div>
   );
 }

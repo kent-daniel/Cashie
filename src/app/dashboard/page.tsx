@@ -3,6 +3,8 @@ import React from "react";
 import { PopoverForm } from "./components/popover-form";
 import { Separator } from "@/components/ui/separator";
 import { NewProjectForm } from "./components/NewProjectForm";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const page = () => {
   return (
@@ -17,6 +19,7 @@ const page = () => {
       </div>
 
       <Separator />
+      <ToastContainer />
     </div>
   );
 };
