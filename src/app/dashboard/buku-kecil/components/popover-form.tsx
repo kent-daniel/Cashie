@@ -27,7 +27,12 @@ export function PopoverForm({ name, title, children }: PopoverFormProps) {
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild>
-        <Button variant="outline">{name}</Button>
+        <Button
+          variant="outline"
+          className="border-emerald-700 hover:bg-emerald-950 text-emerald-200"
+        >
+          {name}
+        </Button>
       </AlertDialogTrigger>
       <AlertDialogPortal>
         <AlertDialogContent>

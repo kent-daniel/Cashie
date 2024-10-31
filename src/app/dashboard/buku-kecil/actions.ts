@@ -8,7 +8,7 @@ import {
   fetchProjectRecords,
 } from "@/data-access/projects";
 import { revalidatePath } from "next/cache";
-import { formatCurrency, parseCurrency } from "./utils";
+import { formatCurrency, parseCurrency } from "../utils";
 import { projects } from "@/models/schema";
 
 const toDomainProjectData = (projectData: ProjectData): ProjectDomain => {

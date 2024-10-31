@@ -4,7 +4,7 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { formatCurrency } from "../utils";
+import { formatCurrency } from "../../utils";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import createNewProject from "../actions";
@@ -119,7 +119,10 @@ export const NewProjectForm = ({ closeForm }: NewProjectFormProps) => {
         </div>
 
         <div className="flex">
-          <Button type="submit" className="w-full">
+          <Button
+            type="submit"
+            className="w-full bg-emerald-700 hover:bg-emerald-600 text-white"
+          >
             Buat Proyek
           </Button>
         </div>

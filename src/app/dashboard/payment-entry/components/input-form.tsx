@@ -148,7 +148,11 @@ export default function PaymentForm() {
           </div>
         </div>
 
-        <Button type="submit" className="w-full" disabled={isSubmitting}>
+        <Button
+          type="submit"
+          className="w-full bg-emerald-800 hover:bg-emerald-700 text-primary"
+          disabled={isSubmitting}
+        >
           {isSubmitting ? "Submitting..." : "Submit Payment"}
         </Button>
       </form>
