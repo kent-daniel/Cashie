@@ -1,8 +1,7 @@
 "use server";
-import { formatCurrency, parseCurrency } from "@/app/dashboard/utils";
 import { db } from "@/db/index";
 import { projects } from "@/models/schema";
-import { eq, desc, sql } from "drizzle-orm";
+import { eq, desc } from "drizzle-orm";
 
 export interface ProjectData {
   companyId: number;
@@ -21,7 +20,6 @@ export type Project = {
   date: Date;
 };
 
-// `ProjectDomain` now correctly extends `ProjectData`
 export type ProjectDomain = Omit<ProjectData, "date"> & {
   date: string;
 };
