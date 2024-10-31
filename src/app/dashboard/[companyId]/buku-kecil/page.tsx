@@ -1,7 +1,7 @@
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ProjectListHeader from "./components/ProjectListHeader";
-import { BackToDashboardButton } from "../components/BackToDashboardButton";
+import { BackToDashboardButton } from "../../components/BackToDashboardButton";
 import { ProjectList } from "./components/ProjectList";
 
 const page = () => {

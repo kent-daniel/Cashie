@@ -2,7 +2,7 @@ import React from "react";
 import { PaymentTable } from "./components/data-table";
 import PaymentForm from "./components/input-form";
 import { getPayments } from "./actions";
-import { BackToDashboardButton } from "../components/BackToDashboardButton";
+import { BackToDashboardButton } from "../../components/BackToDashboardButton";
 
 const page = async () => {
   const payments = await getPayments();

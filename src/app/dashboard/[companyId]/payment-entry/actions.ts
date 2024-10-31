@@ -9,7 +9,7 @@ import {
 } from "@/data-access/payment";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { revalidatePath } from "next/cache";
-import { formatCurrency } from "../utils";
+import { formatCurrency } from "../../utils";
 
 export type PaymentPresentationDTO = {
   amount: number;
