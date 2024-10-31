@@ -5,9 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { formatCurrency } from "../utils";
-import { createProject } from "@/data-access/projects";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import createNewProject from "../actions";
 
 interface FormData {
   projectCode: string;
@@ -38,7 +38,7 @@ export const NewProjectForm = ({ closeForm }: NewProjectFormProps) => {
   });
 
   const onSubmit: SubmitHandler<FormData> = async (data) => {
-    const response = await createProject({ companyId: 1, ...data });
+    const response = await createNewProject({ companyId: 1, ...data });
     if (!response.success) {
       toast.error(response.message); // Display error toast
     } else {
