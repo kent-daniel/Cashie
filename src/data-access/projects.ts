@@ -49,3 +49,20 @@ export const fetchProjectRecords = async (companyId: number) => {
     };
   }
 };
+
+export const fetchUniqueProjectCodes = async () => {
+  try {
+    const projectCodes = await db
+      .selectDistinct({ projectCode: projects.projectCode })
+      .from(projects)
+      .orderBy(desc(projects.projectCode));
+
+    return projectCodes.map((p) => p.projectCode);
+  } catch (error) {
+    console.error({
+      success: false,
+      message: `Failed to fetch unique project codes: ${error}`,
+    });
+    return [];
+  }
+};

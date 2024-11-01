@@ -18,7 +18,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { getUniqueProjectCodes } from "@/data-access/payment";
+import { fetchUniqueProjectCodes } from "@/data-access/projects";
 
 export function ProjectCodeCombobox({
   setProjectCode,
@@ -33,7 +33,7 @@ export function ProjectCodeCombobox({
   // fetch unique project codes
   React.useEffect(() => {
     const fetchProjectCodes = async () => {
-      const codes = await getUniqueProjectCodes();
+      const codes = await fetchUniqueProjectCodes();
       setProjectCodes(codes);
     };
 
@@ -95,15 +95,7 @@ export function ProjectCodeCombobox({
               </CommandGroup>
             ) : (
               <CommandEmpty>
-                <div className="flex flex-col gap-3 items-center p-1">
-                  {inputValue}
-                  <Button
-                    onClick={handleCustomSelect}
-                    className="whitespace-nowrap gap-2 bg-secondary-foreground"
-                  >
-                    tambah kode baru <PlusIcon size={15} />
-                  </Button>
-                </div>
+                <div>Tidak ada hasil</div>
               </CommandEmpty>
             )}
           </CommandList>

@@ -78,18 +78,6 @@ export const deletePayment = async (id: number) => {
   return result;
 };
 
-// get unique project codes
-export const getUniqueProjectCodes = async () => {
-  const result = await db
-    .select({
-      projectCode: payments.projectCode,
-    })
-    .from(payments)
-    .groupBy(payments.projectCode); // Group by projectCode to ensure uniqueness
-
-  return result.map((payment) => payment.projectCode);
-};
-
 // Get total credit and debit for a specific project code
 export const getTotalProjectCreditDebit = async (projectCode: string) => {
   const result = await db
