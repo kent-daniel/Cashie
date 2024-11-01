@@ -10,7 +10,6 @@ const page = () => {
       <BackToDashboardButton />
       <div className="mx-auto w-1/2 flex flex-col justify-center">
         <ProjectListHeader />
-
         <ProjectList />
         <ToastContainer />
       </div>

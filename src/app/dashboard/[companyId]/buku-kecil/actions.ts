@@ -52,14 +52,12 @@ const createNewProject = async (data: ProjectData) => {
 
 export default createNewProject;
 
-export const fetchProjects = async (companyId: number) => {
+export const fetchProjects = async (companyId: number): Promise<Project[]> => {
   try {
     const response = await fetchProjectRecords(companyId);
-    return response.projects?.map(toModelProject);
+    return response.projects?.map(toModelProject) || [];
   } catch (error) {
-    return {
-      success: false,
-      message: "Failed to fetch project. Please try again.",
-    };
+    console.error("Failed to fetch projects:", error);
+    return [];
   }
 };
