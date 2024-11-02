@@ -17,7 +17,7 @@ interface PopoverFormProps {
   title: string;
   children: ChildrenFunction;
 }
-export type ChildrenFunction = (closePopover: Function) => ReactNode;
+export type ChildrenFunction = (closePopover: () => void) => ReactNode;
 
 export function PopoverForm({ name, title, children }: PopoverFormProps) {
   const [open, setOpen] = useState(false);

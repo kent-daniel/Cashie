@@ -1,9 +1,9 @@
 // import { fetchCompanyById } from "../actions"; // Adjust the import based on your actions file
 import Link from "next/link";
-import { Company, getCompanyNameById } from "../actions"; // Adjust the import based on your actions file
+import { getCompanyNameById } from "../actions"; // Adjust the import based on your actions file
 import { BackToDashboardButton } from "../components/BackToDashboardButton";
 import { Button } from "@/components/ui/button";
-import { BookCheck, BookUp2Icon, BookUpIcon } from "lucide-react";
+import { BookCheck, BookUpIcon } from "lucide-react";
 
 const Layout = async ({
   children,

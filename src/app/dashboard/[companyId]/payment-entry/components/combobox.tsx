@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Check, ChevronsUpDown, PlusIcon } from "lucide-react";
+import { Check, ChevronsUpDown } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -43,12 +43,6 @@ export function ProjectCodeCombobox({
   const handleSelect = (currentValue: string) => {
     setValue(currentValue === value ? "" : currentValue);
     setProjectCode(currentValue);
-    setOpen(false);
-  };
-
-  const handleCustomSelect = () => {
-    setValue(inputValue);
-    setProjectCode(inputValue);
     setOpen(false);
   };
 
