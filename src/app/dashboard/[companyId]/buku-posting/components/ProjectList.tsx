@@ -26,19 +26,18 @@ const ProjectCell = async ({ project }: { project: Project }) => {
 
   return (
     <Card className="w-full border border-zinc-700 bg-zinc-900 text-gray-100 shadow-lg rounded-lg">
-      <CardHeader className="p-4 rounded-t-lg flex justify-between items-center border-b border-zinc-700">
-        <CardTitle className="text-lg font-semibold text-gray-50 flex items-center relative">
+      <CardHeader className="p-4 rounded-t-lg border-b border-zinc-700">
+        <CardTitle className="text-lg font-semibold text-gray-50 flex items-center relative justify-between w-full">
           {project.name}
-
           {parseCurrency(totalCredit) >
             parseCurrency(project.estimationBudget) && (
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <span className="ml-3 flex items-center relative cursor-pointer">
+                  <span className="mr-3 flex items-center relative cursor-pointer">
                     <span className="absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75 animate-ping"></span>
-                    <span className="relative inline-flex rounded-full h-4 w-4 bg-yellow-400 items-center justify-center">
-                      <span className="text-[12px] leading-none text-orange-700">
+                    <span className="relative inline-flex rounded-full h-8 w-8 bg-yellow-400 items-center justify-center">
+                      <span className="text-[24px] leading-none text-orange-700">
                         ⚠️
                       </span>
                     </span>
@@ -51,8 +50,7 @@ const ProjectCell = async ({ project }: { project: Project }) => {
             </TooltipProvider>
           )}
         </CardTitle>
-
-        <span className="text-md font-medium text-gray-400">
+        <span className="text-md font-medium text-gray-400 text-left">
           #{project.projectCode}
         </span>
       </CardHeader>
