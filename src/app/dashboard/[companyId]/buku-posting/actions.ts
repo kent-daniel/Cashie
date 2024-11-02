@@ -10,6 +10,7 @@ import {
 import { revalidatePath } from "next/cache";
 import { formatCurrency, parseCurrency } from "../../utils";
 import { projects } from "@/models/schema";
+import { getTotalProjectCreditDebit } from "@/data-access/payment";
 
 const toDomainProjectData = (projectData: ProjectData): ProjectDomain => {
   return {
@@ -59,5 +60,26 @@ export const fetchProjects = async (companyId: number): Promise<Project[]> => {
   } catch (error) {
     console.error("Failed to fetch projects:", error);
     return [];
+  }
+};
+
+export const getProjectStatistics = async (
+  projectCode: string
+): Promise<{
+  totalCredit: string;
+  totalDebit: string;
+}> => {
+  try {
+    const response = await getTotalProjectCreditDebit(projectCode);
+    return {
+      totalCredit: formatCurrency(response.totalCredit.toString()),
+      totalDebit: formatCurrency(response.totalDebit.toString()),
+    };
+  } catch (error) {
+    console.error("Failed to fetch projects:", error);
+    return {
+      totalCredit: "Tidak ada",
+      totalDebit: "Tidak ada",
+    };
   }
 };
