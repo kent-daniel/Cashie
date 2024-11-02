@@ -1,6 +1,6 @@
 "use server";
 import { db } from "@/db/index";
-import { payments } from "@/models/schema";
+import { payments, projects } from "@/models/schema";
 import { eq, desc, sql } from "drizzle-orm";
 
 interface PaymentData {
@@ -51,9 +51,23 @@ export const createPayment = async (paymentData: PaymentData) => {
 };
 
 // Get all payments
-export const getAllPayments = async (): Promise<Payment[]> => {
-  const result = await db.select().from(payments).orderBy(desc(payments.id));
-  return result.map(toModelPayment); // Map to model format
+export const getAllPayments = async (companyId: number): Promise<Payment[]> => {
+  const result = await db
+    .select({
+      id: payments.id,
+      projectCode: payments.projectCode,
+      amount: payments.amount,
+      description: payments.description,
+      category: payments.category,
+      email: payments.email,
+      date: payments.date, // Include additional fields as needed
+    })
+    .from(payments)
+    .innerJoin(projects, eq(payments.projectCode, projects.projectCode))
+    .where(eq(projects.companyId, companyId))
+    .orderBy(desc(payments.id));
+
+  return result.map(toModelPayment);
 };
 
 // Get a payment by ID

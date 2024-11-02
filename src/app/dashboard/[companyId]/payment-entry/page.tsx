@@ -3,8 +3,8 @@ import { PaymentTable } from "./components/data-table";
 import PaymentForm from "./components/input-form";
 import { getPayments } from "./actions";
 
-const page = async () => {
-  const payments = await getPayments();
+const page = async ({ params }: { params: { companyId: string } }) => {
+  const payments = await getPayments(params.companyId);
   return (
     <div className="p-10">
       <h1 className="text-2xl font-bold text-center mt-6">

@@ -14,10 +14,10 @@ import { ArrowRightCircle } from "lucide-react";
 
 const ProjectCell = async ({
   project,
-  params,
+  companyId,
 }: {
   project: Project;
-  params: { companyId: string };
+  companyId: string;
 }) => {
   const { totalCredit, totalDebit } = await getProjectStatistics(
     project.projectCode
@@ -35,35 +35,35 @@ const ProjectCell = async ({
       </CardHeader>
       <CardContent className="p-4 space-y-2 text-sm text-gray-300">
         <div className="flex justify-between">
-          <span className="font-medium text-gray-200">Nilai:</span>
-          <span className="text-gray-400">{project.projectValue}</span>
-        </div>
-
-        <div className="flex justify-between">
-          <span className="font-medium text-gray-200">Estimasi:</span>
-          <span className="text-gray-400">{project.estimationBudget}</span>
-        </div>
-        <div className="flex justify-between">
-          <span className="font-medium text-gray-200">Tanggal:</span>
+          <span className="font-medium text-gray-200">
+            Tanggal mulai proyek :
+          </span>
           <span className="text-gray-400">
             {project.date.toLocaleDateString()}
           </span>
         </div>
+        <div className="flex justify-between">
+          <span className="font-medium text-gray-200">Nilai kontrak :</span>
+          <span className="text-gray-400">{project.projectValue}</span>
+        </div>
+
+        <div className="flex justify-between">
+          <span className="font-medium text-gray-200">RAB :</span>
+          <span className="text-gray-400">{project.estimationBudget}</span>
+        </div>
+
         <Separator className="my-2" />
         <div className="flex justify-between">
-          <span className="font-medium text-red-400">Total credit</span>
+          <span className="font-medium text-red-400">Total biaya</span>
           <span className="text-red-400">{totalCredit}</span>
         </div>
         <div className="flex justify-between">
-          <span className="font-medium text-emerald-400">Total debit</span>
+          <span className="font-medium text-emerald-400">Total pembayaran</span>
           <span className="text-emerald-400">{totalDebit}</span>
         </div>
       </CardContent>
       <CardFooter className="">
-        <Link
-          href={`dashboard/${params.companyId}/${project.projectCode}`}
-          className="w-full my-2"
-        >
+        <Link href={`${project.projectCode}`} className="w-full my-2">
           <Button className="bg-emerald-700 hover:bg-emerald-600 text-white w-full">
             Lihat rincian <ArrowRightCircle />
           </Button>
@@ -73,12 +73,12 @@ const ProjectCell = async ({
   );
 };
 
-export const ProjectList = async () => {
-  const projects = await fetchProjects(1);
+export const ProjectList = async ({ companyId }: { companyId: string }) => {
+  const projects = await fetchProjects(Number(companyId));
   return (
     <div className="p-6 space-y-4 min-h-screen">
       {projects?.map((project, index) => (
-        <ProjectCell key={index} project={project} />
+        <ProjectCell key={index} project={project} companyId={companyId} />
       ))}
     </div>
   );

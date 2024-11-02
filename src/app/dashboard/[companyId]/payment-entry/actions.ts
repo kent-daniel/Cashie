@@ -5,11 +5,11 @@ import {
   createPayment,
   getAllPayments,
   getTotalProjectCreditDebit,
-  getUniqueProjectCodes,
 } from "@/data-access/payment";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { revalidatePath } from "next/cache";
 import { formatCurrency } from "../../utils";
+import { toInteger } from "lodash";
 
 export type PaymentPresentationDTO = {
   amount: number;
@@ -81,9 +81,11 @@ export const addNewPaymentEntry = async ({
   }
 };
 
-export const getPayments = async (): Promise<PaymentPresentationDTO[]> => {
+export const getPayments = async (
+  companyId: string
+): Promise<PaymentPresentationDTO[]> => {
   try {
-    const payments = await getAllPayments();
+    const payments = await getAllPayments(toInteger(companyId));
 
     return payments.map(mapToPresentationPayment);
   } catch (error) {
@@ -97,13 +99,6 @@ export const getStatsByProjectCode = async (
   id: string
 ): Promise<Stats | undefined> => {
   try {
-    const uniqueProjectCodes = await getUniqueProjectCodes();
-
-    if (!uniqueProjectCodes.includes(id)) {
-      console.warn(`Project code ${id} not found in unique project codes.`);
-      return;
-    }
-
     const result = await getTotalProjectCreditDebit(id);
     return {
       totalCredit: formatCurrency(result.totalCredit.toString()),

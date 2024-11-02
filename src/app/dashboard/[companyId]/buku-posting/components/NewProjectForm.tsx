@@ -19,9 +19,13 @@ interface FormData {
 
 interface NewProjectFormProps {
   closeForm: () => void;
+  companyId: number;
 }
 
-export const NewProjectForm = ({ closeForm }: NewProjectFormProps) => {
+export const NewProjectForm = ({
+  closeForm,
+  companyId,
+}: NewProjectFormProps) => {
   const {
     register,
     handleSubmit,
@@ -38,7 +42,7 @@ export const NewProjectForm = ({ closeForm }: NewProjectFormProps) => {
   });
 
   const onSubmit: SubmitHandler<FormData> = async (data) => {
-    const response = await createNewProject({ companyId: 1, ...data });
+    const response = await createNewProject({ companyId: companyId, ...data });
     if (!response.success) {
       toast.error(response.message); // Display error toast
     } else {
@@ -73,7 +77,7 @@ export const NewProjectForm = ({ closeForm }: NewProjectFormProps) => {
         </div>
 
         <div>
-          <Label htmlFor="estimationBudget">Estimasi Anggaran</Label>
+          <Label htmlFor="estimationBudget">RAB</Label>
           <Input
             id="estimationBudget"
             {...register("estimationBudget", {
@@ -83,7 +87,7 @@ export const NewProjectForm = ({ closeForm }: NewProjectFormProps) => {
                 setValue("estimationBudget", formatted); // Update the input with formatted value
               },
             })}
-            placeholder="Masukkan estimasi anggaran"
+            placeholder="Masukkan RAB"
           />
           {errors.estimationBudget && (
             <p className="text-red-500">{errors.estimationBudget.message}</p>
@@ -91,7 +95,7 @@ export const NewProjectForm = ({ closeForm }: NewProjectFormProps) => {
         </div>
 
         <div>
-          <Label htmlFor="projectValue">Nilai Proyek</Label>
+          <Label htmlFor="projectValue">Nilai Kontrak</Label>
           <Input
             id="projectValue"
             {...register("projectValue", {
@@ -101,7 +105,7 @@ export const NewProjectForm = ({ closeForm }: NewProjectFormProps) => {
                 setValue("projectValue", formatted);
               },
             })}
-            placeholder="Masukkan nilai proyek"
+            placeholder="Masukkan nilai kontrak"
           />
           {errors.projectValue && (
             <p className="text-red-500">{errors.projectValue.message}</p>
