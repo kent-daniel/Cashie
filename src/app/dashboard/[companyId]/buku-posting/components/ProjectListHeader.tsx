@@ -16,7 +16,7 @@ const ProjectListHeader = () => {
           )}
         </PopoverForm>
       </div>
-      <Separator className="bg-emerald-700" />
+      <Separator className="" />
     </>
   );
 };

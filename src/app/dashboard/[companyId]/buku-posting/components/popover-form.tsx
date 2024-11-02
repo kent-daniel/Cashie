@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { XIcon } from "lucide-react";
-import { Dispatch, ReactNode, SetStateAction, useState } from "react";
+import { ReactNode, useState } from "react";
 
 interface PopoverFormProps {
   name: string;
@@ -28,8 +28,8 @@ export function PopoverForm({ name, title, children }: PopoverFormProps) {
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild>
         <Button
-          variant="outline"
-          className="border-emerald-700 hover:bg-emerald-950 text-emerald-200"
+          variant="default"
+          className="bg-emerald-700 hover:bg-emerald-800 text-white border-emerald-700 border-t-emerald-600  border"
         >
           {name}
         </Button>

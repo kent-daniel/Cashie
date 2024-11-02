@@ -45,7 +45,7 @@ export const Dashboard = ({ companies }: { companies: Company[] }) => {
       <div className="flex justify-center items-center gap-8 text-emerald-300">
         <Link
           href={
-            selectedCompany ? `dashboard/${selectedCompany}/buku-kecil` : "#"
+            selectedCompany ? `dashboard/${selectedCompany}/buku-posting` : "#"
           }
         >
           <button
@@ -53,7 +53,7 @@ export const Dashboard = ({ companies }: { companies: Company[] }) => {
             disabled={!selectedCompany}
           >
             <BookCheck size={64} />
-            <span>Buku Kecil</span>
+            <span>Buku posting</span>
           </button>
         </Link>
         <Link
