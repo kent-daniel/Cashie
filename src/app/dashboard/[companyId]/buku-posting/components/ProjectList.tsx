@@ -11,14 +11,15 @@ import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { ArrowRightCircle } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { parseCurrency } from "@/app/dashboard/utils";
 
-const ProjectCell = async ({
-  project,
-  companyId,
-}: {
-  project: Project;
-  companyId: string;
-}) => {
+const ProjectCell = async ({ project }: { project: Project }) => {
   const { totalCredit, totalDebit } = await getProjectStatistics(
     project.projectCode
   );
@@ -26,9 +27,31 @@ const ProjectCell = async ({
   return (
     <Card className="w-full mb-4 border border-zinc-700 bg-zinc-900 text-gray-100 shadow-lg rounded-lg hover:shadow-xl transition-shadow duration-200">
       <CardHeader className="p-4 rounded-t-lg flex justify-between items-center border-b border-zinc-700">
-        <CardTitle className="text-lg font-semibold text-gray-50">
+        <CardTitle className="text-lg font-semibold text-gray-50 flex items-center relative">
           {project.name}
+
+          {parseCurrency(totalCredit) >
+            parseCurrency(project.estimationBudget) && (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span className="ml-3 flex items-center relative cursor-pointer">
+                    <span className="absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75 animate-ping"></span>
+                    <span className="relative inline-flex rounded-full h-4 w-4 bg-yellow-400 items-center justify-center">
+                      <span className="text-[12px] leading-none text-orange-700">
+                        ⚠️
+                      </span>
+                    </span>
+                  </span>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Biaya melebihi RAB</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          )}
         </CardTitle>
+
         <span className="text-md font-medium text-gray-400">
           #{project.projectCode}
         </span>
@@ -78,7 +101,7 @@ export const ProjectList = async ({ companyId }: { companyId: string }) => {
   return (
     <div className="p-6 space-y-4 min-h-screen">
       {projects?.map((project, index) => (
-        <ProjectCell key={index} project={project} companyId={companyId} />
+        <ProjectCell key={index} project={project} />
       ))}
     </div>
   );
