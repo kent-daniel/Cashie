@@ -197,7 +197,7 @@ export function PaymentTable({ data }: { data: PaymentPresentationDTO[] }) {
 
   return (
     <div className="w-full">
-      <TableMenu table={table} columnFilters={columnFilters} />
+      <TableMenu table={table} />
       <div className="rounded-md border">
         <Table>
           <TableHeader>

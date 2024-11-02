@@ -1,3 +1,4 @@
+import Link from "next/link";
 import React from "react";
 
 interface ProjectCodeCellProps {
@@ -28,12 +29,14 @@ const ProjectCodeCell: React.FC<ProjectCodeCellProps> = ({ projectCode }) => {
   };
 
   return (
-    <div
-      className="text-start cursor-pointer underline underline-offset-4"
-      onClick={handleClick}
-    >
-      {projectCode}
-    </div>
+    <Link href={projectCode}>
+      <div
+        className="text-start cursor-pointer underline underline-offset-4"
+        onClick={handleClick}
+      >
+        {projectCode}
+      </div>
+    </Link>
   );
 };
 

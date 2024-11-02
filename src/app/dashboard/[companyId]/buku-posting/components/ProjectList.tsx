@@ -25,7 +25,7 @@ const ProjectCell = async ({ project }: { project: Project }) => {
   );
 
   return (
-    <Card className="w-full mb-4 border border-zinc-700 bg-zinc-900 text-gray-100 shadow-lg rounded-lg hover:shadow-xl transition-shadow duration-200">
+    <Card className="w-full border border-zinc-700 bg-zinc-900 text-gray-100 shadow-lg rounded-lg">
       <CardHeader className="p-4 rounded-t-lg flex justify-between items-center border-b border-zinc-700">
         <CardTitle className="text-lg font-semibold text-gray-50 flex items-center relative">
           {project.name}
@@ -99,7 +99,7 @@ const ProjectCell = async ({ project }: { project: Project }) => {
 export const ProjectList = async ({ companyId }: { companyId: string }) => {
   const projects = await fetchProjects(Number(companyId));
   return (
-    <div className="p-6 space-y-4 min-h-screen">
+    <div className="p-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 my-3">
       {projects?.map((project, index) => (
         <ProjectCell key={index} project={project} />
       ))}

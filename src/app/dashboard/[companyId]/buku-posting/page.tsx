@@ -7,7 +7,7 @@ const page = ({ params }: { params: { companyId: string } }) => {
   const { companyId } = params;
   return (
     <>
-      <div className="mx-auto w-1/2 flex flex-col justify-center">
+      <div className="mx-auto px-3 flex flex-col justify-center">
         <ProjectListHeader companyId={companyId} />
         <ProjectList companyId={companyId} />
         <ToastContainer />
