@@ -50,6 +50,29 @@ export const fetchProjectRecords = async (companyId: number) => {
   }
 };
 
+export const fetchProjectByCode = async (projectCode: string) => {
+  try {
+    const projectRecord = await db
+      .select()
+      .from(projects)
+      .where(eq(projects.projectCode, projectCode));
+
+    if (projectRecord.length === 0) {
+      return {
+        success: false,
+        message: `Project with code ${projectCode} not found`,
+      };
+    }
+
+    return { success: true, project: projectRecord[0] };
+  } catch (error) {
+    return {
+      success: false,
+      message: `Failed to fetch project by code: ${error}`,
+    };
+  }
+};
+
 export const fetchUniqueProjectCodes = async () => {
   try {
     const projectCodes = await db

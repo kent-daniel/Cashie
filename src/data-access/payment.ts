@@ -1,4 +1,5 @@
 "use server";
+import { formatCurrency } from "@/app/dashboard/utils";
 import { db } from "@/db/index";
 import { payments, projects } from "@/models/schema";
 import { eq, desc, sql } from "drizzle-orm";
@@ -13,6 +14,7 @@ interface PaymentData {
 }
 
 export type Payment = {
+  id: number;
   projectCode: string;
   amount: number;
   description?: string;
@@ -35,6 +37,7 @@ const toDomainPaymentData = (paymentData: PaymentData) => {
 
 const toModelPayment = (payment: typeof payments.$inferSelect): Payment => {
   return {
+    id: payment.id,
     projectCode: payment.projectCode,
     amount: parseFloat(payment.amount),
     description: payment.description ?? "",
@@ -43,6 +46,7 @@ const toModelPayment = (payment: typeof payments.$inferSelect): Payment => {
     email: payment.email,
   };
 };
+
 // Create a new payment
 export const createPayment = async (paymentData: PaymentData) => {
   const preparedData = toDomainPaymentData(paymentData);
@@ -65,6 +69,27 @@ export const getAllPayments = async (companyId: number): Promise<Payment[]> => {
     .from(payments)
     .innerJoin(projects, eq(payments.projectCode, projects.projectCode))
     .where(eq(projects.companyId, companyId))
+    .orderBy(desc(payments.id));
+
+  return result.map(toModelPayment);
+};
+
+// Get all payments by project code
+export const getPaymentsByProjectCode = async (
+  projectCode: string
+): Promise<Payment[]> => {
+  const result = await db
+    .select({
+      id: payments.id,
+      projectCode: payments.projectCode,
+      amount: payments.amount,
+      description: payments.description,
+      category: payments.category,
+      email: payments.email,
+      date: payments.date, // Include additional fields as needed
+    })
+    .from(payments)
+    .where(eq(payments.projectCode, projectCode))
     .orderBy(desc(payments.id));
 
   return result.map(toModelPayment);
