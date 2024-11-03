@@ -33,16 +33,21 @@ export const toModelPaymentRow = (
 export const fetchProjectPaymentRows = async (
   projectCode: string
 ): Promise<PaymentRow[]> => {
+  console.log(`Fetching project payment rows for project code: ${projectCode}`);
   const projectRecords = await getPaymentsByProjectCode(projectCode);
   const { project } = await fetchProjectByCode(projectCode);
 
-  if (project === undefined) return [];
-
-  return projectRecords.map((record) =>
+  if (project === undefined) {
+    console.log(`Project with code ${projectCode} not found.`);
+    return [];
+  }
+  const res = projectRecords.map((record) =>
     toModelPaymentRow(
       record,
       Number(project.projectValue),
       Number(project.estimationBudget)
     )
   );
+  console.log(res);
+  return res;
 };
