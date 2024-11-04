@@ -6,15 +6,16 @@ import {
   SelectItem,
 } from "@/components/ui/select"; // Assuming you're using Shadcn UI for these components
 import { Table } from "@tanstack/react-table";
-import { PaymentPresentationDTO } from "../actions";
 
-const PageSizeSelector = ({
+interface PageSizeSelectorProps<T> {
+  table: Table<T>;
+  className?: string;
+}
+
+const PageSizeSelector = <T,>({
   table,
-  className,
-}: {
-  table: Table<PaymentPresentationDTO>;
-  className: string;
-}) => {
+  className = "",
+}: PageSizeSelectorProps<T>) => {
   const pageSizeOptions = [5, 10, 20, 50, 100];
 
   return (

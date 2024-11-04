@@ -44,3 +44,14 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 ## License
 
 This project is open source and available under the [MIT License](LICENSE).
+
+# todo
+
+- [ ] add table in project breakdown page
+- [ ] add chart
+- [ ] add date filter in table in project page
+- [ ] add revision / edit
+- [ ] add revision history
+- [ ] add project details page
+- [ ] add generate random unique project code
+- [ ] P kode untuk proyek , S untuk service

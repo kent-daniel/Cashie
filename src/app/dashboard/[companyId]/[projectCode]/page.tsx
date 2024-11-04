@@ -1,20 +1,14 @@
 import React from "react";
 import { fetchProjectPaymentRows } from "./actions";
+import { PaymentRecordsTable } from "./components/PaymentRecordsTable";
 
 const page = async ({ params }: { params: { projectCode: string } }) => {
-  const response = await fetchProjectPaymentRows(params.projectCode);
+  const paymentRows = await fetchProjectPaymentRows(params.projectCode);
 
   return (
-    <>
-      <div>
-        <p>
-          Number of Payments: {response.length} {response[0].email}
-        </p>
-      </div>
-      {response.map((row) => (
-        <p key={row.id}>{row.description}</p>
-      ))}
-    </>
+    <div>
+      <PaymentRecordsTable data={paymentRows} />
+    </div>
   );
 };
 

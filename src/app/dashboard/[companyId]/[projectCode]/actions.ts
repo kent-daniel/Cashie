@@ -13,8 +13,6 @@ export type PaymentRow = Payment & {
 export const fetchProjectPaymentRows = async (
   projectCode: string
 ): Promise<PaymentRow[]> => {
-  console.log(`Fetching project payment rows for project code: ${projectCode}`);
-
   try {
     // Fetch payments and project data - make sure to await both
     const projectData = await fetchProjectByCode(projectCode);
@@ -22,11 +20,6 @@ export const fetchProjectPaymentRows = async (
       projectCode
     );
 
-    // Add some debug logging
-    console.log("Project Records:", projectRecords);
-    console.log("Is Array?", Array.isArray(projectRecords));
-
-    // Check if the project data exists
     if (!projectData || !projectData.project) {
       console.log(`Project with code ${projectCode} not found.`);
       return [];
@@ -63,7 +56,6 @@ export const fetchProjectPaymentRows = async (
       });
     }
 
-    console.log(paymentRows);
     return paymentRows;
   } catch (error) {
     console.error("Error in fetchProjectPaymentRows:", error);
