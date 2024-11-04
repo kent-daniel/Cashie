@@ -27,8 +27,10 @@ const toDomainProjectData = (projectData: ProjectData): ProjectDomain => {
 const toModelProject = (project: typeof projects.$inferSelect): Project => {
   return {
     projectCode: project.projectCode,
-    projectValue: formatCurrency(project.projectValue),
-    estimationBudget: formatCurrency(project.estimationBudget),
+    projectValue: formatCurrency(Number(project.projectValue).toString()),
+    estimationBudget: formatCurrency(
+      Number(project.estimationBudget).toString()
+    ),
     name: project.name,
     date: new Date(project.date),
   };

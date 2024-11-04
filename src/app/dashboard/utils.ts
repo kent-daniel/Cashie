@@ -1,6 +1,6 @@
 export const formatCurrency = (value: string) => {
-  const formattedValue = value
-    .replace(/\D/g, "") // Remove non-digit characters
+  const formattedValue = Number(value.replace(/\D/g, ""))
+    .toString() // Remove non-digit characters
     .replace(/\B(?=(\d{3})+(?!\d))/g, ","); // Add thousands separator
   return "Rp " + formattedValue; // Add "Rp" as a prefix
 };

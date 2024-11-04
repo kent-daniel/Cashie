@@ -57,8 +57,8 @@ export const fetchProjectPaymentRows = async (
         ...payment,
         debitAmount,
         creditAmount,
-        remainingValue: projectValue - runningDebitTotal,
-        remainingBudget: estimationBudget - runningCreditTotal,
+        remainingValue: Number(projectValue) - runningDebitTotal,
+        remainingBudget: Number(estimationBudget) - runningCreditTotal,
         date: new Date(payment.date),
       });
     }
