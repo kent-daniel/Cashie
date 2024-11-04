@@ -12,7 +12,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-
+import { ColumnDef } from "@tanstack/react-table";
 import {
   Table,
   TableBody,
@@ -22,10 +22,18 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { PaymentRow } from "../actions";
-import { columns } from "./PaymentRecordsColumns";
+import { getPaymentRecordsColumns } from "./PaymentRecordsColumns";
 import TableFooter from "../../payment-entry/components/TableFooter";
 
-export function PaymentRecordsTable({ data }: { data: PaymentRow[] }) {
+export function PaymentRecordsTable({
+  data,
+  nilaiProyek,
+  RAB,
+}: {
+  data: PaymentRow[];
+  nilaiProyek: string;
+  RAB: string;
+}) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -33,6 +41,10 @@ export function PaymentRecordsTable({ data }: { data: PaymentRow[] }) {
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
+  const columns: ColumnDef<PaymentRow>[] = getPaymentRecordsColumns(
+    nilaiProyek,
+    RAB
+  );
 
   const table = useReactTable({
     data,
@@ -65,18 +77,20 @@ export function PaymentRecordsTable({ data }: { data: PaymentRow[] }) {
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </TableHead>
-                  );
-                })}
+                {headerGroup.headers.map((header) => (
+                  <TableHead
+                    key={header.id}
+                    colSpan={header.colSpan}
+                    className="text-center border"
+                  >
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                  </TableHead>
+                ))}
               </TableRow>
             ))}
           </TableHeader>
@@ -100,7 +114,7 @@ export function PaymentRecordsTable({ data }: { data: PaymentRow[] }) {
             ) : (
               <TableRow>
                 <TableCell
-                  colSpan={columns.length}
+                  colSpan={table.getAllColumns().length}
                   className="h-24 text-center"
                 >
                   No results.

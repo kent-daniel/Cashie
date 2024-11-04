@@ -9,7 +9,7 @@ interface TableFooterProps<T> {
 
 const TableFooter = <T,>({ table }: TableFooterProps<T>): JSX.Element => {
   return (
-    <div className="flex items-center justify-end space-x-2 py-4">
+    <div className="flex items-center justify-end space-x-2 py-4 px-2">
       <p>Tampilkan baris:</p>
       <PageSizeSelector table={table} className="fl" />
       <div className="flex-1 text-sm text-muted-foreground">

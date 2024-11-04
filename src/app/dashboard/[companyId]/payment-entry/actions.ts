@@ -12,6 +12,7 @@ import { formatCurrency } from "../../utils";
 import { toInteger } from "lodash";
 
 export type PaymentPresentationDTO = {
+  id: number;
   amount: number;
   projectCode: string;
   category: "debit" | "credit" | "saldo awal";
@@ -36,6 +37,7 @@ const getEmailFromKinde = async (): Promise<string | null> => {
 };
 
 const mapToPresentationPayment = (data: Payment): PaymentPresentationDTO => ({
+  id: data.id,
   amount: data.amount,
   projectCode: data.projectCode,
   category:

@@ -1,21 +1,14 @@
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-} from "@radix-ui/react-dropdown-menu";
-import { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown, MoreHorizontal } from "lucide-react";
+import { Column, Row } from "@tanstack/react-table";
+import { ArrowUpDown, Eye } from "lucide-react";
 import { PaymentRow } from "../actions";
+import Link from "next/link";
 
-export const columns: ColumnDef<PaymentRow>[] = [
-  {
-    accessorKey: "date",
-    header: ({ column }) => {
-      return (
+export const getPaymentRecordsColumns = (nilaiProyek: string, RAB: string) => {
+  return [
+    {
+      accessorKey: "date",
+      header: ({ column }: { column: Column<PaymentRow> }) => (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
@@ -23,110 +16,137 @@ export const columns: ColumnDef<PaymentRow>[] = [
           Tanggal
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
-      );
+      ),
+      cell: ({ row }: { row: Row<PaymentRow> }) => (
+        <div className="lowercase p-2">
+          {(row.getValue("date") as Date).toLocaleDateString()}
+        </div>
+      ),
     },
-    cell: ({ row }) => (
-      <div className="lowercase p-2">
-        {(row.getValue("date") as Date).toLocaleDateString()}
-      </div>
-    ),
-  },
-
-  {
-    accessorKey: "description",
-    header: () => {
-      return <p>Deskripsi</p>;
+    {
+      accessorKey: "description",
+      header: () => <p>Deskripsi</p>,
+      cell: ({ row }: { row: Row<PaymentRow> }) => (
+        <div className="lowercase">{row.getValue("description")}</div>
+      ),
     },
-    cell: ({ row }) => (
-      <div className="lowercase">{row.getValue("description")}</div>
-    ),
-  },
 
-  {
-    accessorKey: "debitAmount",
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-      >
-        Pembayaran
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
-    cell: ({ row }) => {
-      const amount = parseFloat(row.getValue("debitAmount"));
-
-      // Format the amount as a dollar amount
-      const formatted = new Intl.NumberFormat("id", {
-        style: "currency",
-        currency: "IDR",
-      }).format(amount);
-
-      return <div className="text-start">{formatted}</div>;
-    },
-  },
-
-  {
-    accessorKey: "creditAmount",
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-      >
-        Biaya
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
-    cell: ({ row }) => {
-      const amount = parseFloat(row.getValue("creditAmount"));
-
-      // Format the amount as a dollar amount
-      const formatted = new Intl.NumberFormat("id", {
-        style: "currency",
-        currency: "IDR",
-      }).format(amount);
-
-      return <div className="text-start">{formatted}</div>;
-    },
-  },
-
-  {
-    accessorKey: "email",
-    header: () => {
-      return <p>Pencatat</p>;
-    },
-    cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div>,
-  },
-
-  {
-    id: "actions",
-    enableHiding: false,
-    cell: ({ row }) => {
-      const payment = row.original;
-
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => {
-                navigator.clipboard.writeText(payment.projectCode);
-              }}
+    // Group for "nilai proyek"
+    {
+      header: `Nilai proyek ${nilaiProyek}`, // Updated header to include parameter
+      columns: [
+        {
+          accessorKey: "debitAmount",
+          header: ({ column }: { column: Column<PaymentRow> }) => (
+            <Button
+              variant="ghost"
+              onClick={() =>
+                column.toggleSorting(column.getIsSorted() === "asc")
+              }
             >
-              Copy kode project
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>View customer</DropdownMenuItem>
-            <DropdownMenuItem>View payment details</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
+              Pembayaran
+              <ArrowUpDown className="ml-2 h-4 w-4" />
+            </Button>
+          ),
+          cell: ({ row }: { row: Row<PaymentRow> }) => {
+            const amount = parseFloat(row.getValue("debitAmount"));
+            const formatted = new Intl.NumberFormat("id", {
+              style: "currency",
+              currency: "IDR",
+            }).format(amount);
+
+            return amount === 0 ? (
+              ""
+            ) : (
+              <div className="text-start">{formatted}</div>
+            );
+          },
+        },
+        {
+          accessorKey: "remainingValue",
+          header: () => <Button variant="ghost">Sisa nilai proyek</Button>,
+          cell: ({ row }: { row: Row<PaymentRow> }) => {
+            const amount = parseFloat(row.getValue("remainingValue"));
+            const formatted = new Intl.NumberFormat("id", {
+              style: "currency",
+              currency: "IDR",
+            }).format(amount);
+
+            return <div className="text-start">{formatted}</div>;
+          },
+        },
+      ],
     },
-  },
-];
+
+    // Group for "RAB"
+    {
+      header: `RAB ${RAB}`, // Updated header to include parameter
+      columns: [
+        {
+          accessorKey: "creditAmount",
+          header: ({ column }: { column: Column<PaymentRow> }) => (
+            <Button
+              variant="ghost"
+              onClick={() =>
+                column.toggleSorting(column.getIsSorted() === "asc")
+              }
+            >
+              Biaya
+              <ArrowUpDown className="ml-2 h-4 w-4" />
+            </Button>
+          ),
+          cell: ({ row }: { row: Row<PaymentRow> }) => {
+            const amount = parseFloat(row.getValue("creditAmount"));
+            const formatted = new Intl.NumberFormat("id", {
+              style: "currency",
+              currency: "IDR",
+            }).format(amount);
+
+            return amount === 0 ? (
+              ""
+            ) : (
+              <div className="text-start">{formatted}</div>
+            );
+          },
+        },
+        {
+          accessorKey: "remainingBudget",
+          header: () => <Button variant="ghost">Sisa RAB</Button>,
+          cell: ({ row }: { row: Row<PaymentRow> }) => {
+            const amount = parseFloat(row.getValue("remainingBudget"));
+            const formatted = new Intl.NumberFormat("id", {
+              style: "currency",
+              currency: "IDR",
+            }).format(amount);
+
+            return (
+              <div
+                className={`text-start ${
+                  amount < 0 ? "text-red-500" : "text-emerald-500"
+                }`}
+              >
+                {formatted}
+              </div>
+            );
+          },
+        },
+      ],
+    },
+
+    {
+      id: "actions",
+      enableHiding: false,
+      cell: ({ row }: { row: Row<PaymentRow> }) => {
+        const payment = row.original;
+
+        return (
+          <Button>
+            <Link href={`payment-entry/${payment.id.toLocaleString()}`}>
+              <Eye />
+            </Link>
+          </Button>
+        );
+      },
+    },
+  ];
+};
