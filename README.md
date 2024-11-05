@@ -47,11 +47,12 @@ This project is open source and available under the [MIT License](LICENSE).
 
 # todo
 
-- [ ] add table in project breakdown page
-- [ ] add chart
+- [x] add table in project breakdown page
+- [x] add chart
 - [ ] add date filter in table in project page
 - [ ] add revision / edit
 - [ ] add revision history
 - [ ] add project details page
 - [ ] add generate random unique project code
 - [ ] P kode untuk proyek , S untuk service
+- [ ] edit project
