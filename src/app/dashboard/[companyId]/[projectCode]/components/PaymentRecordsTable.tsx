@@ -1,5 +1,4 @@
 "use client";
-
 import * as React from "react";
 import {
   ColumnFiltersState,
@@ -70,6 +69,18 @@ export function PaymentRecordsTable({
     },
   });
 
+  // Calculate totals for debit and credit columns
+  const totals = React.useMemo(() => {
+    return data.reduce(
+      (acc, row) => {
+        acc.debitAmount += row.debitAmount || 0;
+        acc.creditAmount += row.creditAmount || 0;
+        return acc;
+      },
+      { debitAmount: 0, creditAmount: 0 }
+    );
+  }, [data]);
+
   return (
     <div className="w-full">
       <div className="rounded-md border">
@@ -102,7 +113,7 @@ export function PaymentRecordsTable({
                   data-state={row.getIsSelected() && "selected"}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                    <TableCell key={cell.id} className="border">
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()
@@ -121,6 +132,27 @@ export function PaymentRecordsTable({
                 </TableCell>
               </TableRow>
             )}
+            {/* Totals Row */}
+            <TableRow className="font-semibold">
+              <TableCell colSpan={2} className="text-center border">
+                Totals
+              </TableCell>
+              <TableCell className="text-left border">
+                {new Intl.NumberFormat("id", {
+                  style: "currency",
+                  currency: "IDR",
+                }).format(totals.debitAmount)}
+              </TableCell>
+              <TableCell className="text-left border" />
+              <TableCell className="text-left border">
+                {new Intl.NumberFormat("id", {
+                  style: "currency",
+                  currency: "IDR",
+                }).format(totals.creditAmount)}
+              </TableCell>
+              <TableCell className="text-left border" />
+              <TableCell className="text-left border" />
+            </TableRow>
           </TableBody>
         </Table>
         <TableFooter table={table} />

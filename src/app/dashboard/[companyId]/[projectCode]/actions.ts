@@ -1,7 +1,7 @@
 "use server";
 
 import { getPaymentsByProjectCode, Payment } from "@/data-access/payment";
-import { fetchProjectByCode } from "@/data-access/projects";
+import { fetchProjectByCode, ProjectDomain } from "@/data-access/projects";
 
 export type PaymentRow = Payment & {
   debitAmount: number;
@@ -80,4 +80,30 @@ export const toModelPaymentRow = (payment: Payment): PaymentRow => {
     remainingValue: 0,
     remainingBudget: 0,
   };
+};
+
+export const getProjectByCode = async (
+  projectCode: string
+): Promise<{ success: boolean; project?: ProjectDomain; message?: string }> => {
+  try {
+    // Call fetchProjectByCode to get the raw project data
+    const result = await fetchProjectByCode(projectCode);
+
+    if (!result.success || !result.project) {
+      return { success: false, message: result.message };
+    }
+
+    // Map to ProjectDomain, converting date to string
+    const projectDomain: ProjectDomain = {
+      ...result.project,
+      date: result.project.date.toString(), // or format as needed
+    };
+
+    return { success: true, project: projectDomain };
+  } catch (error) {
+    return {
+      success: false,
+      message: `Failed to process project data: ${error}`,
+    };
+  }
 };

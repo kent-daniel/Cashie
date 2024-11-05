@@ -98,10 +98,10 @@ export const getPayments = async (
 
 // get stats by project code
 export const getStatsByProjectCode = async (
-  id: string
+  code: string
 ): Promise<Stats | undefined> => {
   try {
-    const result = await getTotalProjectCreditDebit(id);
+    const result = await getTotalProjectCreditDebit(code);
     return {
       totalCredit: formatCurrency(result.totalCredit.toString()),
       totalDebit: formatCurrency(result.totalDebit.toString()),

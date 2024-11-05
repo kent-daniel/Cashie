@@ -1,15 +1,18 @@
 import React from "react";
-import { fetchProjectPaymentRows } from "./actions";
+import { fetchProjectPaymentRows, getProjectByCode } from "./actions";
 import { PaymentRecordsTable } from "./components/PaymentRecordsTable";
-import { fetchProjectByCode } from "@/data-access/projects";
 import { formatCurrency } from "../../utils";
+import ProjectCard from "./components/ProjectCard";
+import { ProjectChart } from "./components/ProjectChart";
 
 const page = async ({ params }: { params: { projectCode: string } }) => {
   const paymentRows = await fetchProjectPaymentRows(params.projectCode);
-  const { project } = await fetchProjectByCode(params.projectCode);
+  const { project } = await getProjectByCode(params.projectCode);
   if (!project) return <></>;
   return (
     <div>
+      <ProjectCard project={project} />
+      <ProjectChart project={project} />
       <div className="m-7">
         <PaymentRecordsTable
           data={paymentRows}
