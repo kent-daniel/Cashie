@@ -133,7 +133,7 @@ export function PaymentRecordsTable({
               </TableRow>
             )}
             {/* Totals Row */}
-            <TableRow className="font-semibold">
+            <TableRow className="font-semibold text-2xl">
               <TableCell colSpan={2} className="text-center border">
                 Totals
               </TableCell>
