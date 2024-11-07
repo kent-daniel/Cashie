@@ -1,19 +1,65 @@
 // @ts-nocheck
-
 "use client";
 import { Button } from "@/components/ui/button";
 import { UploadButton } from "@/utils/uploadThing";
 import { ArrowUp10Icon } from "lucide-react";
 import { useEffect, useState } from "react";
 import Spreadsheet from "react-spreadsheet";
-import { parseImageToCsv } from "./actions";
+import OpenAI from "openai";
+
+// Ensure OpenAI key exists
+if (!process.env.NEXT_PUBLIC_OPENAI_API_KEY) {
+  console.error("OpenAI API key is missing.");
+}
+
+const openai = new OpenAI({
+  apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY,
+  dangerouslyAllowBrowser: true,
+});
+
+export const parseImageToCsv = async (imageUrl) => {
+  console.log("Parsing image:", imageUrl);
+  try {
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [
+        {
+          role: "system",
+          content:
+            "You are a helpful data extraction agent. For numeric values like Rp 200,000,000, parse them as 200000000. Date format should be dd/mm/yyyy",
+        },
+        {
+          role: "user",
+          content: [
+            {
+              type: "text",
+              text: "Please extract the data to CSV from the image at the following URL, with columns [Kode, Tanggal, Deskripsi, Nilai, Kategori (can be Debit / Kredit)]. Do not return the column names or any other text or formatting, just the parsed values and rows ONLY",
+            },
+            {
+              type: "image_url",
+              image_url: {
+                url: imageUrl,
+              },
+            },
+          ],
+        },
+      ],
+    });
+
+    const extractedCsv = response.choices[0]?.message?.content?.trim() || "";
+    console.log("Extracted CSV:", extractedCsv);
+    return extractedCsv;
+  } catch (error) {
+    console.error("Error in parsing image to CSV:", error);
+    return "";
+  }
+};
 
 // Helper function to parse CSV into a 2D array
 const parseCSV = (csv) => {
   const MAX_ROWS = 50;
   const MAX_COLUMNS = 5;
 
-  // Parse the CSV into a 2D array of cell objects
   const parsedData = csv.split("\n").map((row) =>
     row
       .trim()
@@ -21,14 +67,12 @@ const parseCSV = (csv) => {
       .map((cell) => ({ value: cell.trim() }))
   );
 
-  // Ensure each row has the same number of columns
   for (let i = 0; i < parsedData.length; i++) {
     while (parsedData[i].length < MAX_COLUMNS) {
       parsedData[i].push({ value: "" });
     }
   }
 
-  // Add empty rows until we reach 50 rows
   while (parsedData.length < MAX_ROWS) {
     parsedData.push(Array.from({ length: MAX_COLUMNS }, () => ({ value: "" })));
   }
@@ -46,15 +90,20 @@ const Page = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleParseImage = async () => {
-    if (imageUrl) {
-      setIsLoading(true);
-      const csvData = await parseImageToCsv(imageUrl);
+    if (!imageUrl) {
+      alert("Please upload an image first.");
+      return;
+    }
+
+    setIsLoading(true);
+    const csvData = await parseImageToCsv(imageUrl);
+    if (csvData) {
       const parsedData = parseCSV(csvData);
       setData(parsedData);
-      setIsLoading(false);
     } else {
-      alert("Please upload an image first.");
+      alert("Failed to parse CSV data.");
     }
+    setIsLoading(false);
   };
 
   return (
@@ -62,12 +111,10 @@ const Page = () => {
       <UploadButton
         endpoint="imageUploader"
         onClientUploadComplete={(res) => {
-          console.log("Files: ", res);
-
+          console.log("Files uploaded:", res);
           setImageUrl(res[0].url);
         }}
-        onUploadError={(error: Error) => {
-          // Do something with the error.
+        onUploadError={(error) => {
           alert(`ERROR! ${error.message}`);
         }}
         className="bg-gray-800"
@@ -76,7 +123,7 @@ const Page = () => {
         <Button
           type="button"
           className={`w-1/2 bg-emerald-600 text-white hover:bg-emerald-700 ${
-            isLoading && "animate-pulse"
+            isLoading ? "animate-pulse" : ""
           }`}
           onClick={handleParseImage}
           disabled={isLoading}
@@ -95,7 +142,7 @@ const Page = () => {
       </div>
 
       <div className="flex items-start">
-        <img src={imageUrl} className="w-1/2 object-contain align-top"></img>
+        <img src={imageUrl} className="w-1/2 object-contain align-top" />
         <Spreadsheet
           data={data}
           onChange={setData}
