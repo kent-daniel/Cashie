@@ -17,7 +17,7 @@ const openai = new OpenAI({
   dangerouslyAllowBrowser: true,
 });
 
-export const parseImageToCsv = async (imageUrl) => {
+const parseImageToCsv = async (imageUrl) => {
   console.log("Parsing image:", imageUrl);
   try {
     const response = await openai.chat.completions.create({
