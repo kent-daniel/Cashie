@@ -7,6 +7,7 @@ const openai = new OpenAI({
 });
 
 export const parseImageToCsv = async (imageUrl: string): Promise<string> => {
+  console.log("parsing image :", imageUrl);
   const response = await openai.chat.completions.create({
     model: "gpt-4o-mini",
     messages: [
