@@ -1,5 +1,6 @@
 import { fetchCompanies } from "./actions";
 import { Dashboard } from "./components/Dashboard";
+export const maxDuration = 30;
 
 const Page = async () => {
   const companies = await fetchCompanies();
