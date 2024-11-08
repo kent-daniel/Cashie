@@ -16,6 +16,8 @@ export type PaymentPresentationDTO = {
   amount: number;
   projectCode: string;
   category: "debit" | "credit" | "saldo";
+  isEdited: boolean;
+  isDeleted: boolean;
   description: string;
   date: Date;
   email: string;
@@ -41,6 +43,8 @@ const mapToPresentationPayment = (data: Payment): PaymentPresentationDTO => ({
   amount: data.amount,
   projectCode: data.projectCode,
   category: data.category,
+  isEdited: data.isEdited,
+  isDeleted: data.isDeleted,
   description: data.description ?? "", // Default to empty string if null
   date: new Date(data.date),
   email: data.email,

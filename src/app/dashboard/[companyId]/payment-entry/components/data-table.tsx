@@ -61,12 +61,27 @@ export const columns: ColumnDef<PaymentPresentationDTO>[] = [
   },
   {
     accessorKey: "description",
+    accessorFn: (row) => ({
+      isEdited: row.isEdited,
+      description: row.description,
+    }),
     header: () => {
       return <p>Deskripsi</p>;
     },
-    cell: ({ row }) => (
-      <div className="lowercase">{row.getValue("description")}</div>
-    ),
+    cell: ({ row }) => {
+      const descriptionData = row.getValue("description") as {
+        isEdited: boolean;
+        description: string;
+      };
+      return (
+        <div
+          className={`${descriptionData.isEdited ? "text-yellow-500" : ""}`}
+          title={`${descriptionData.isEdited && "data pernah diubah"}`}
+        >
+          {descriptionData.description}
+        </div>
+      );
+    },
   },
 
   {
