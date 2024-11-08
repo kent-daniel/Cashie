@@ -56,24 +56,13 @@ export const payments = pgTable("payments", {
 });
 
 // Define the `history` table for tracking changes on `projects` and `payments`
-export const history = pgTable(
-  "history",
-  {
-    referenceId: integer("reference_id").notNull(), // Foreign key reference ID
-    referenceType: varchar("reference_type", { length: 10 }).notNull(), // 'project' or 'payment'
-    description: text("description"), // Description of the historical change
-    email: varchar("email", { length: 100 }).notNull(),
-    date: date("date").notNull(), // Date of the change record
-  },
-  (table) => {
-    return {
-      uniqueReference: uniqueIndex("unique_reference").on(
-        table.referenceId,
-        table.referenceType
-      ),
-    };
-  }
-);
+export const history = pgTable("history", {
+  referenceId: integer("reference_id").notNull(), // Foreign key reference ID
+  referenceType: varchar("reference_type", { length: 10 }).notNull(), // 'project' or 'payment'
+  description: text("description"), // Description of the historical change
+  email: varchar("email", { length: 100 }).notNull(),
+  date: date("date").notNull(), // Date of the change record
+});
 // Define Relations
 export const companiesRelations = relations(companies, ({ many }) => ({
   projects: many(projects), // Company has many projects

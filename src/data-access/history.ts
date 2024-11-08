@@ -14,7 +14,7 @@ export const addHistory = async (
     referenceId,
     referenceType,
     description,
-    date: new Date().toString(),
+    date: new Date().toISOString(),
     email,
   });
 };

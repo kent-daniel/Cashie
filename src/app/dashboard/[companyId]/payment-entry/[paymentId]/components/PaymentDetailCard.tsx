@@ -3,34 +3,58 @@ import React, { useState } from "react";
 import { PaymentPresentationDTO } from "../../actions";
 import { formatCurrency } from "@/app/dashboard/utils";
 import { Button } from "@/components/ui/button";
-import { EditIcon, CheckIcon, XIcon } from "lucide-react";
-import { useForm } from "react-hook-form";
+import { EditIcon, CheckIcon, XIcon, LoaderIcon } from "lucide-react";
+import { useForm, SubmitHandler } from "react-hook-form";
+import { revisePaymentDetails } from "../actions";
+import { toast, ToastContainer } from "react-toastify";
+import { PaymentData } from "@/data-access/payment";
+import "react-toastify/dist/ReactToastify.css";
+
+interface PaymentDetailCardProps {
+  paymentDetails: PaymentPresentationDTO;
+  paymentId: number;
+}
 
 export const PaymentDetailCard = ({
   paymentDetails,
-}: {
-  paymentDetails: PaymentPresentationDTO;
-}) => {
+  paymentId,
+}: PaymentDetailCardProps) => {
   const [isEditing, setIsEditing] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm({
-    defaultValues: paymentDetails,
+  } = useForm<PaymentData>({
+    defaultValues: {
+      ...paymentDetails,
+      amount: paymentDetails.amount.toString(), // Ensure amount is a string for input
+      date: paymentDetails.date.toISOString().split("T")[0], // Ensure date is in YYYY-MM-DD format
+    },
   });
 
-  const onSubmit = (data: PaymentPresentationDTO) => {
-    // Implement save logic here, such as an API call
-    console.log("Saved Data:", data);
-    setIsEditing(false);
+  const onSubmit: SubmitHandler<PaymentData> = async (data) => {
+    setIsLoading(true);
+    try {
+      await revisePaymentDetails(paymentId, data);
+      toast.success("Data berhasil di revisi");
+      setIsEditing(false);
+    } catch (error) {
+      toast.error("Data gagal di revisi");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const toggleEditMode = () => setIsEditing(!isEditing);
   const handleCancel = () => {
-    reset(paymentDetails); // Reset form to original values
+    reset({
+      ...paymentDetails,
+      amount: paymentDetails.amount.toString(),
+      date: paymentDetails.date.toISOString().split("T")[0], // Reset date format to match input
+    });
     setIsEditing(false);
   };
 
@@ -45,12 +69,20 @@ export const PaymentDetailCard = ({
             <Button
               className="bg-emerald-600 hover:bg-emerald-500 text-white"
               onClick={handleSubmit(onSubmit)}
+              disabled={isLoading}
             >
-              Save <CheckIcon />
+              {isLoading ? (
+                <LoaderIcon className="animate-spin" />
+              ) : (
+                <>
+                  Save <CheckIcon />
+                </>
+              )}
             </Button>
             <Button
               className="bg-red-600 hover:bg-red-500 text-white"
               onClick={handleCancel}
+              disabled={isLoading}
             >
               Cancel <XIcon />
             </Button>
@@ -108,10 +140,13 @@ export const PaymentDetailCard = ({
         <p>
           <strong>Kategori:</strong>{" "}
           {isEditing ? (
-            <input
+            <select
               {...register("category", { required: "Kategori is required" })}
               className="bg-zinc-700 text-white rounded px-3 py-2 w-full"
-            />
+            >
+              <option value="credit">Kredit</option>
+              <option value="debit">Debit</option>
+            </select>
           ) : (
             paymentDetails.category
           )}
@@ -157,13 +192,14 @@ export const PaymentDetailCard = ({
               className="bg-zinc-700 text-white rounded px-3 py-2 w-full"
             />
           ) : (
-            paymentDetails.date.toLocaleDateString("id-ID")
+            paymentDetails.date.toISOString().split("T")[0]
           )}
           {errors.date && (
             <span className="text-red-500">{errors.date.message}</span>
           )}
         </p>
       </form>
+      <ToastContainer />
     </div>
   );
 };

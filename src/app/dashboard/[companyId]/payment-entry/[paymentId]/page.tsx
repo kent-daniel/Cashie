@@ -1,7 +1,5 @@
-import { formatCurrency } from "@/app/dashboard/utils";
 import { getPaymentDetails } from "./actions";
-import { Button } from "@/components/ui/button";
-import { EditIcon } from "lucide-react";
+
 import { PaymentDetailCard } from "./components/PaymentDetailCard";
 
 const Page = async ({ params }: { params: { paymentId: string } }) => {
@@ -12,7 +10,10 @@ const Page = async ({ params }: { params: { paymentId: string } }) => {
     <div className="p-8 space-y-8">
       {/* Payment Details Section */}
       <div className="bg-white dark:bg-zinc-900 p-6 rounded-xl shadow-lg border border-zinc-200 dark:border-zinc-700">
-        <PaymentDetailCard paymentDetails={paymentDetails} />
+        <PaymentDetailCard
+          paymentDetails={paymentDetails}
+          paymentId={Number(params.paymentId!)}
+        />
       </div>
 
       {/* History Section */}
@@ -32,6 +33,12 @@ const Page = async ({ params }: { params: { paymentId: string } }) => {
                     Tanggal:
                   </strong>{" "}
                   {new Date(historyItem.date).toLocaleDateString("id-ID")}
+                </p>
+                <p>
+                  <strong className="font-medium text-zinc-700 dark:text-zinc-400">
+                    Oleh:
+                  </strong>{" "}
+                  {historyItem.email}
                 </p>
                 <p>
                   <strong className="font-medium text-zinc-700 dark:text-zinc-400">

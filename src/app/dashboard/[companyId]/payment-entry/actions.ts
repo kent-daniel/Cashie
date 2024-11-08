@@ -26,7 +26,7 @@ export type Stats = {
   totalCredit: string;
 };
 
-const getEmailFromKinde = async (): Promise<string | null> => {
+export const getEmailFromKinde = async (): Promise<string | null> => {
   const { getUser } = getKindeServerSession();
   const user = await getUser();
 

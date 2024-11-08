@@ -1,9 +1,10 @@
 "use server";
+import { PaymentPresentationDTO } from "@/app/dashboard/[companyId]/payment-entry/actions";
 import { db } from "@/db/index";
 import { payments, projects } from "@/models/schema";
 import { eq, desc, sql } from "drizzle-orm";
 
-interface PaymentData {
+export interface PaymentData {
   projectCode: string; // Required field
   amount: string;
   description?: string; // Optional
@@ -26,6 +27,7 @@ export type Payment = {
 
 // Helper function to convert date to string if necessary
 const toDomainPaymentData = (paymentData: PaymentData) => {
+  console.log("updating", paymentData);
   return {
     ...paymentData,
     date:
@@ -52,7 +54,9 @@ const toModelPayment = (payment: typeof payments.$inferSelect): Payment => {
 
 // Create a new payment
 export const createPayment = async (paymentData: PaymentData) => {
-  const preparedData = toDomainPaymentData(paymentData);
+  const preparedData = toDomainPaymentData({
+    ...paymentData,
+  });
   const result = await db.insert(payments).values(preparedData);
   return result;
 };
@@ -110,10 +114,13 @@ export const getPaymentById = async (id: number): Promise<Payment> => {
 
 // Update a payment by ID
 export const updatePayment = async (id: number, paymentData: PaymentData) => {
-  const preparedData = toDomainPaymentData(paymentData);
   const result = await db
     .update(payments)
-    .set(preparedData)
+    .set({
+      ...toDomainPaymentData(paymentData),
+      isDeleted: false,
+      isEdited: true,
+    })
     .where(eq(payments.id, id)); // Use eq instead of equals
   return result;
 };
