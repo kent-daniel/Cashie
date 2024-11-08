@@ -7,13 +7,15 @@ type ReferenceType = "payment" | "project";
 export const addHistory = async (
   referenceId: number,
   referenceType: ReferenceType,
-  description: string
+  description: string,
+  email: string
 ) => {
   await db.insert(history).values({
     referenceId,
     referenceType,
     description,
     date: new Date().toString(),
+    email,
   });
 };
 

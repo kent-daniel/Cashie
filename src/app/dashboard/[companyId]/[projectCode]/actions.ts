@@ -75,6 +75,8 @@ export const toModelPaymentRow = (payment: Payment): PaymentRow => {
     category: payment.category as "debit" | "credit" | "saldo",
     date: new Date(payment.date),
     email: payment.email,
+    isEdited: payment.isEdited,
+    isDeleted: payment.isDeleted,
     debitAmount,
     creditAmount,
     remainingValue: 0,

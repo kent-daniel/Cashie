@@ -18,6 +18,8 @@ export type Payment = {
   amount: number;
   description?: string;
   category: "debit" | "credit" | "saldo";
+  isEdited: boolean;
+  isDeleted: boolean;
   date: Date;
   email: string;
 };
@@ -42,6 +44,8 @@ const toModelPayment = (payment: typeof payments.$inferSelect): Payment => {
     description: payment.description ?? "",
     category: payment.category as "debit" | "credit" | "saldo",
     date: new Date(payment.date),
+    isDeleted: payment.isDeleted,
+    isEdited: payment.isEdited,
     email: payment.email,
   };
 };
@@ -63,6 +67,8 @@ export const getAllPayments = async (companyId: number): Promise<Payment[]> => {
       description: payments.description,
       category: payments.category,
       email: payments.email,
+      isDeleted: payments.isDeleted,
+      isEdited: payments.isEdited,
       date: payments.date, // Include additional fields as needed
     })
     .from(payments)
@@ -85,6 +91,8 @@ export const getPaymentsByProjectCode = async (
       description: payments.description,
       category: payments.category,
       email: payments.email,
+      isDeleted: payments.isDeleted,
+      isEdited: payments.isEdited,
       date: payments.date, // Include additional fields as needed
     })
     .from(payments)
@@ -95,9 +103,9 @@ export const getPaymentsByProjectCode = async (
 };
 
 // Get a payment by ID
-export const getPaymentById = async (id: number) => {
-  const result = await db.select().from(payments).where(eq(payments.id, id)); // Use eq instead of equals
-  return result;
+export const getPaymentById = async (id: number): Promise<Payment> => {
+  const result = await db.select().from(payments).where(eq(payments.id, id));
+  return toModelPayment(result[0]);
 };
 
 // Update a payment by ID

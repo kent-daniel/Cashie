@@ -1,0 +1,1 @@
+ALTER TABLE "history" ADD COLUMN "email" varchar(100) NOT NULL;

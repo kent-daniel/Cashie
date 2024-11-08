@@ -36,6 +36,20 @@
       "when": 1731035604083,
       "tag": "0004_high_dazzler",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1731045419244,
+      "tag": "0005_handy_hulk",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1731048051489,
+      "tag": "0006_white_tattoo",
+      "breakpoints": true
     }
   ]
 }

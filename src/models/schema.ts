@@ -7,6 +7,7 @@ import {
   text,
   integer,
   uniqueIndex,
+  boolean,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
@@ -46,6 +47,8 @@ export const payments = pgTable("payments", {
     })
     .notNull(),
   amount: decimal("amount", { precision: 15, scale: 2 }).notNull(),
+  isEdited: boolean("is_edited").notNull().default(false),
+  isDeleted: boolean("is_deleted").notNull().default(false),
   description: text("description"),
   category: varchar("category", { length: 10 }).notNull(), // 'debit' or 'credit'
   date: date("date").notNull(),
@@ -59,6 +62,7 @@ export const history = pgTable(
     referenceId: integer("reference_id").notNull(), // Foreign key reference ID
     referenceType: varchar("reference_type", { length: 10 }).notNull(), // 'project' or 'payment'
     description: text("description"), // Description of the historical change
+    email: varchar("email", { length: 100 }).notNull(),
     date: date("date").notNull(), // Date of the change record
   },
   (table) => {

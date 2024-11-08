@@ -15,7 +15,7 @@ export type PaymentPresentationDTO = {
   id: number;
   amount: number;
   projectCode: string;
-  category: "debit" | "credit" | "saldo awal";
+  category: "debit" | "credit" | "saldo";
   description: string;
   date: Date;
   email: string;
@@ -40,10 +40,7 @@ const mapToPresentationPayment = (data: Payment): PaymentPresentationDTO => ({
   id: data.id,
   amount: data.amount,
   projectCode: data.projectCode,
-  category:
-    data.category === "saldo"
-      ? "saldo awal"
-      : (data.category as "debit" | "credit"),
+  category: data.category,
   description: data.description ?? "", // Default to empty string if null
   date: new Date(data.date),
   email: data.email,
