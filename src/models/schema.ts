@@ -6,6 +6,7 @@ import {
   date,
   text,
   integer,
+  uniqueIndex,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
@@ -51,6 +52,24 @@ export const payments = pgTable("payments", {
   email: varchar("email", { length: 100 }).notNull(),
 });
 
+// Define the `history` table for tracking changes on `projects` and `payments`
+export const history = pgTable(
+  "history",
+  {
+    referenceId: integer("reference_id").notNull(), // Foreign key reference ID
+    referenceType: varchar("reference_type", { length: 10 }).notNull(), // 'project' or 'payment'
+    description: text("description"), // Description of the historical change
+    date: date("date").notNull(), // Date of the change record
+  },
+  (table) => {
+    return {
+      uniqueReference: uniqueIndex("unique_reference").on(
+        table.referenceId,
+        table.referenceType
+      ),
+    };
+  }
+);
 // Define Relations
 export const companiesRelations = relations(companies, ({ many }) => ({
   projects: many(projects), // Company has many projects
@@ -58,9 +77,9 @@ export const companiesRelations = relations(companies, ({ many }) => ({
 
 export const projectsRelations = relations(projects, ({ one, many }) => ({
   company: one(companies), // Project belongs to one company
-  payments: many(payments), // Project has many payments
+  payments: many(payments), // Project has many payments // Filtered relation for project history
 }));
 
-export const paymentsRelations = relations(payments, ({ one }) => ({
+export const paymentsRelations = relations(payments, ({ one, many }) => ({
   project: one(projects), // Payment belongs to one project
 }));
