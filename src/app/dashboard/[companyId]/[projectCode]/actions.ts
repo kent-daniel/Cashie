@@ -11,13 +11,17 @@ export type PaymentRow = Payment & {
 };
 
 export const fetchProjectPaymentRows = async (
-  projectCode: string
+  projectCode: string,
+  startDate?: string,
+  endDate?: string
 ): Promise<PaymentRow[]> => {
   try {
     // Fetch payments and project data - make sure to await both
     const projectData = await fetchProjectByCode(projectCode);
     const projectRecords: Payment[] = await getPaymentsByProjectCode(
-      projectCode
+      projectCode,
+      startDate,
+      endDate
     );
 
     if (!projectData || !projectData.project) {

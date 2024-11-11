@@ -63,7 +63,7 @@ export function ProjectChart({ project }: { project: ProjectDomain }) {
   };
 
   return (
-    <Card className="flex flex-col m-6">
+    <Card className="flex flex-col">
       <CardHeader className="items-center pb-0">
         <CardTitle>Project Financial Overview</CardTitle>
         <CardDescription>Nilai proyek vs. Total pembayaran</CardDescription>

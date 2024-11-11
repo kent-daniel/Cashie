@@ -2,7 +2,7 @@
 import { PaymentPresentationDTO } from "@/app/dashboard/[companyId]/payment-entry/actions";
 import { db } from "@/db/index";
 import { payments, projects } from "@/models/schema";
-import { eq, desc, sql } from "drizzle-orm";
+import { eq, desc, sql, and, gte, lte } from "drizzle-orm";
 
 export interface PaymentData {
   projectCode: string; // Required field
@@ -85,8 +85,15 @@ export const getAllPayments = async (companyId: number): Promise<Payment[]> => {
 
 // Get all payments by project code
 export const getPaymentsByProjectCode = async (
-  projectCode: string
+  projectCode: string,
+  startDate?: string,
+  endDate?: string
 ): Promise<Payment[]> => {
+  const conditions = [eq(payments.projectCode, projectCode)];
+
+  startDate && conditions.push(gte(payments.date, startDate));
+  endDate && conditions.push(lte(payments.date, endDate));
+
   const result = await db
     .select({
       id: payments.id,
@@ -97,11 +104,11 @@ export const getPaymentsByProjectCode = async (
       email: payments.email,
       isDeleted: payments.isDeleted,
       isEdited: payments.isEdited,
-      date: payments.date, // Include additional fields as needed
+      date: payments.date,
     })
     .from(payments)
-    .where(eq(payments.projectCode, projectCode))
-    .orderBy(desc(payments.id));
+    .where(and(...conditions))
+    .orderBy(desc(payments.date));
 
   return result.map(toModelPayment);
 };
