@@ -2,6 +2,8 @@
 
 import { getPaymentsByProjectCode, Payment } from "@/data-access/payment";
 import { fetchProjectByCode, ProjectDomain } from "@/data-access/projects";
+import { mkConfig, generateCsv, asBlob } from "export-to-csv";
+import { Buffer } from "node:buffer";
 
 export type PaymentRow = Payment & {
   debitAmount: number;
@@ -112,4 +114,34 @@ export const getProjectByCode = async (
       message: `Failed to process project data: ${error}`,
     };
   }
+};
+export const exportDataToCsv = async (
+  projectCode: string,
+  startDate?: string,
+  endDate?: string
+): Promise<Blob> => {
+  const projectRecords: Payment[] = await getPaymentsByProjectCode(
+    projectCode,
+    startDate,
+    endDate
+  );
+
+  // map to CSV columns
+  const csvData = projectRecords.map((record) => ({
+    Kode: record.projectCode,
+    Debit: record.category === "debit" && record.amount,
+    Kredit: record.category === "credit" && record.amount,
+    Tanggal: new Date(record.date).toISOString().split("T")[0],
+    Deskripsi: record.description ?? "",
+  }));
+  const csvConfig = mkConfig({
+    useKeysAsHeaders: true,
+    filename: `${projectCode}|${startDate ? startDate : ""}${
+      endDate ? "-" + endDate : ""
+    }|Summary`,
+  });
+  const csv = generateCsv(csvConfig)(csvData);
+  const blob = asBlob(csvConfig)(csv);
+
+  return blob;
 };
