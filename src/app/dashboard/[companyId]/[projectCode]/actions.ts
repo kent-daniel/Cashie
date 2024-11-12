@@ -2,8 +2,7 @@
 
 import { getPaymentsByProjectCode, Payment } from "@/data-access/payment";
 import { fetchProjectByCode, ProjectDomain } from "@/data-access/projects";
-import { mkConfig, generateCsv, asBlob } from "export-to-csv";
-import { Buffer } from "node:buffer";
+import { mkConfig } from "export-to-csv";
 
 export type PaymentRow = Payment & {
   debitAmount: number;
@@ -115,11 +114,11 @@ export const getProjectByCode = async (
     };
   }
 };
-export const exportDataToCsv = async (
+export const getCsvDataFormat = async (
   projectCode: string,
   startDate?: string,
   endDate?: string
-): Promise<Blob> => {
+): Promise<string> => {
   const projectRecords: Payment[] = await getPaymentsByProjectCode(
     projectCode,
     startDate,
@@ -128,10 +127,10 @@ export const exportDataToCsv = async (
 
   // map to CSV columns
   const csvData = projectRecords.map((record) => ({
-    Kode: record.projectCode,
-    Debit: record.category === "debit" && record.amount,
-    Kredit: record.category === "credit" && record.amount,
     Tanggal: new Date(record.date).toISOString().split("T")[0],
+    Kode: record.projectCode,
+    Debit: record.category === "debit" ? record.amount.toString() : "0",
+    Kredit: record.category === "credit" ? record.amount.toString() : "0",
     Deskripsi: record.description ?? "",
   }));
   const csvConfig = mkConfig({
@@ -140,8 +139,6 @@ export const exportDataToCsv = async (
       endDate ? "-" + endDate : ""
     }|Summary`,
   });
-  const csv = generateCsv(csvConfig)(csvData);
-  const blob = asBlob(csvConfig)(csv);
 
-  return blob;
+  return JSON.stringify({ csvData, csvConfig });
 };

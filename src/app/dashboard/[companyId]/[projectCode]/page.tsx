@@ -1,15 +1,11 @@
 import React from "react";
-import {
-  exportDataToCsv,
-  fetchProjectPaymentRows,
-  getProjectByCode,
-} from "./actions";
+import { fetchProjectPaymentRows, getProjectByCode } from "./actions";
 import { PaymentRecordsTable } from "./components/PaymentRecordsTable";
 import { formatCurrency } from "../../utils";
 import ProjectCard from "./components/ProjectCard";
 import { ProjectChart } from "./components/ProjectChart";
-import { Button } from "@/components/ui/button";
 import DatePicker from "../payment-entry/components/date-picker";
+import { ExportToCsvButton } from "./components/ExportToCsvButton";
 // Server Component
 const Page = async ({
   params,
@@ -32,8 +28,14 @@ const Page = async ({
     <div className="p-8 gap-5 flex flex-col">
       <ProjectCard project={project} />
       <ProjectChart project={project} />
-      <DatePicker />
-      <Button>Export to CSV</Button>
+      <div className="flex justify-between">
+        <DatePicker />
+        <ExportToCsvButton
+          projectCode={project.projectCode}
+          startDate={startDate}
+          endDate={endDate}
+        />
+      </div>
       <PaymentRecordsTable
         data={paymentRows}
         nilaiProyek={formatCurrency(Number(project.projectValue).toString())}
