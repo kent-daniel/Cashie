@@ -77,7 +77,9 @@ export const getAllPayments = async (companyId: number): Promise<Payment[]> => {
     })
     .from(payments)
     .innerJoin(projects, eq(payments.projectCode, projects.projectCode))
-    .where(eq(projects.companyId, companyId))
+    .where(
+      and(eq(projects.companyId, companyId), eq(payments.isDeleted, false))
+    )
     .orderBy(desc(payments.id));
 
   return result.map(toModelPayment);
@@ -89,7 +91,10 @@ export const getPaymentsByProjectCode = async (
   startDate?: string,
   endDate?: string
 ): Promise<Payment[]> => {
-  const conditions = [eq(payments.projectCode, projectCode)];
+  const conditions = [
+    eq(payments.projectCode, projectCode),
+    eq(payments.isDeleted, false),
+  ];
 
   startDate && conditions.push(gte(payments.date, startDate));
   endDate && conditions.push(lte(payments.date, endDate));
@@ -115,7 +120,10 @@ export const getPaymentsByProjectCode = async (
 
 // Get a payment by ID
 export const getPaymentById = async (id: number): Promise<Payment> => {
-  const result = await db.select().from(payments).where(eq(payments.id, id));
+  const result = await db
+    .select()
+    .from(payments)
+    .where(and(eq(payments.id, id), eq(payments.isDeleted, false)));
   return toModelPayment(result[0]);
 };
 
@@ -133,8 +141,13 @@ export const updatePayment = async (id: number, paymentData: PaymentData) => {
 };
 
 // Delete a payment by ID
-export const deletePayment = async (id: number) => {
-  const result = await db.delete(payments).where(eq(payments.id, id)); // Use eq instead of equals
+export const deletePaymentById = async (id: number) => {
+  const result = await db
+    .update(payments)
+    .set({
+      isDeleted: true,
+    })
+    .where(eq(payments.id, id));
   return result;
 };
 
@@ -147,7 +160,9 @@ export const getTotalProjectCreditDebit = async (projectCode: string) => {
       totalDebit: sql`SUM(CASE WHEN category = 'debit' THEN amount ELSE 0 END)`, // Total for debit
     })
     .from(payments)
-    .where(eq(payments.projectCode, projectCode)) // Filter by projectCode
+    .where(
+      and(eq(payments.projectCode, projectCode), eq(payments.isDeleted, false))
+    ) // Filter by projectCode
     .groupBy(payments.projectCode); // Group by projectCode
 
   if (result.length === 0) {

@@ -6,6 +6,9 @@ import ProjectCard from "./components/ProjectCard";
 import { ProjectChart } from "./components/ProjectChart";
 import DatePicker from "../payment-entry/components/date-picker";
 import { ExportToCsvButton } from "./components/ExportToCsvButton";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 // Server Component
 const Page = async ({
   params,
@@ -41,6 +44,7 @@ const Page = async ({
         nilaiProyek={formatCurrency(Number(project.projectValue).toString())}
         RAB={formatCurrency(Number(project.estimationBudget).toString())}
       />
+      <ToastContainer />
     </div>
   );
 };

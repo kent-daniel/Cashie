@@ -3,6 +3,7 @@
 import {
   Payment,
   createPayment,
+  deletePaymentById,
   getAllPayments,
   getTotalProjectCreditDebit,
 } from "@/data-access/payment";
@@ -49,6 +50,16 @@ const mapToPresentationPayment = (data: Payment): PaymentPresentationDTO => ({
   date: new Date(data.date),
   email: data.email,
 });
+
+export const deletePayment = async (paymentId: number): Promise<void> => {
+  const { getUser } = getKindeServerSession();
+  const user = await getUser();
+
+  if (!user || user == null || !user.id)
+    throw new Error("something went wrong with authentication" + user);
+  await deletePaymentById(paymentId);
+  revalidatePath("/");
+};
 
 export const addNewPaymentEntry = async ({
   amount,

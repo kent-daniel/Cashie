@@ -1,8 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Column, Row } from "@tanstack/react-table";
-import { ArrowUpDown, Eye } from "lucide-react";
+import { ArrowUpDown } from "lucide-react";
 import { PaymentRow } from "../actions";
-import Link from "next/link";
+import { PaymentRowActionCell } from "./PaymentRowActionCell";
 
 export const getPaymentRecordsColumns = (nilaiProyek: string, RAB: string) => {
   return [
@@ -139,13 +139,7 @@ export const getPaymentRecordsColumns = (nilaiProyek: string, RAB: string) => {
       cell: ({ row }: { row: Row<PaymentRow> }) => {
         const payment = row.original;
 
-        return (
-          <Button>
-            <Link href={`payment-entry/${payment.id.toLocaleString()}`}>
-              <Eye />
-            </Link>
-          </Button>
-        );
+        return <PaymentRowActionCell paymentId={payment.id.toString()} />;
       },
     },
   ];

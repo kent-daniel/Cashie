@@ -13,8 +13,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { ArrowUpDown, Eye } from "lucide-react";
-import Link from "next/link";
+import { ArrowUpDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 import {
@@ -29,6 +28,7 @@ import { PaymentPresentationDTO } from "../actions";
 import TableFooter from "./TableFooter";
 import ProjectCodeCell from "./data-table/projectCodeCell";
 import TableMenu from "./data-table/TableMenuHeader";
+import { PaymentRowActionCell } from "../../[projectCode]/components/PaymentRowActionCell";
 
 export const columns: ColumnDef<PaymentPresentationDTO>[] = [
   {
@@ -144,13 +144,7 @@ export const columns: ColumnDef<PaymentPresentationDTO>[] = [
     cell: ({ row }) => {
       const payment = row.original;
 
-      return (
-        <Button>
-          <Link href={`payment-entry/${payment.id.toLocaleString()}`}>
-            <Eye />
-          </Link>
-        </Button>
-      );
+      return <PaymentRowActionCell paymentId={payment.id.toString()} />;
     },
   },
 ];

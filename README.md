@@ -57,4 +57,5 @@ This project is open source and available under the [MIT License](LICENSE).
 - [ ] P kode untuk proyek , S untuk service
 - [ ] edit project
 - [ ] Whatsapp notification
-- [ ] export to csv
+- [x] export to csv
+- [x] delete payment
