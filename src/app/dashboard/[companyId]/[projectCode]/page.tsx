@@ -9,6 +9,8 @@ import { ExportToCsvButton } from "./components/ExportToCsvButton";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { ProjectMenu } from "./components/containers/ProjectMenu";
+import { ProjectChart } from "./components/ProjectChart";
+import ProjectRevisionList from "./components/ProjectRevisionList";
 
 // Server Component
 const Page = async ({
@@ -31,7 +33,16 @@ const Page = async ({
   return (
     <div className="p-8 gap-5 flex flex-col">
       <ProjectCard project={project} />
-      <ProjectMenu project={project} />
+      <div className="flex gap-3">
+        <div className="w-1/2">
+          <ProjectChart project={project} />
+        </div>
+        <div className="w-1/2 flex flex-col gap-2">
+          <ProjectMenu project={project} />
+          <ProjectRevisionList project={project} />
+        </div>
+      </div>
+
       <div className="flex justify-between">
         <DatePicker />
         <ExportToCsvButton

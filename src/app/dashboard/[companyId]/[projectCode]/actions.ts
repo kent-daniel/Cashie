@@ -152,22 +152,6 @@ export const getCsvDataFormat = async (
   return JSON.stringify({ csvData, csvConfig });
 };
 
-const prepareUpdatedData = (
-  id: number,
-  name: string,
-  projectValue: string,
-  RAB: string,
-  projectCode: string,
-  date: string
-): Project => ({
-  id,
-  name,
-  projectValue: Number(parseCurrency(projectValue)).toString(),
-  estimationBudget: Number(parseCurrency(RAB)).toString(),
-  projectCode,
-  date: new Date(date),
-});
-
 const detectChanges = (
   original: ProjectDomain,
   updated: Project,
@@ -177,20 +161,23 @@ const detectChanges = (
   const changes = [];
 
   if (original.name !== updated.name)
-    changes.push(`Name: ${original.name} -> ${updated.name}`);
+    changes.push(`Nama: ${original.name} -> ${updated.name}`);
   if (Number(original.projectValue).toString() !== updated.projectValue)
     changes.push(
-      `Nilai kontrak: ${original.projectValue} -> ${updated.projectValue}`
+      `Nilai kontrak: ${Number(original.projectValue).toString()} -> ${
+        updated.projectValue
+      }`
     );
   if (Number(original.estimationBudget).toString() !== updated.estimationBudget)
     changes.push(
-      `RAB: ${original.estimationBudget} -> ${updated.estimationBudget}`
+      `RAB: ${Number(original.estimationBudget).toString()} -> ${
+        updated.estimationBudget
+      }`
     );
   if (original.date !== updated.date.toISOString().split("T")[0])
     changes.push(`Tanggal: ${original.date} -> ${updated.date}`);
 
-  if (changes.length > 0)
-    changes.push(`Komentar: ${comment}`, `Diubah oleh: ${email}`);
+  if (changes.length > 0) changes.push(`Komentar: ${comment}`);
   return changes;
 };
 
@@ -225,8 +212,8 @@ export const reviseProjectDetails = async (
     const updatedData = {
       id,
       name,
-      projectValue: parseCurrency(projectValue).toString(),
-      estimationBudget: parseCurrency(RAB).toString(),
+      projectValue: Number(parseCurrency(projectValue)).toString(),
+      estimationBudget: Number(parseCurrency(RAB)).toString(),
       projectCode,
       date: new Date(date),
     };
@@ -254,8 +241,20 @@ export const reviseProjectDetails = async (
     return { success: false, message: `Error revising project: ${error}` };
   }
 };
+export interface ProjectRevisionHistory {
+  date: string;
+  description: string;
+  email: string;
+}
 
-export const fetchProjectRevisionHistory = async (projectId: number) => {
+export const fetchProjectRevisionHistory = async (
+  projectId: number
+): Promise<ProjectRevisionHistory[]> => {
   const result = await fetchHistory(projectId, "project");
-  result.map((history) => {});
+  // Map the result to the ProjectRevisionHistory structure
+  return result.map((history) => ({
+    date: history.date, // Assuming date is a Date object; otherwise, adjust as needed
+    description: history.description || "",
+    email: history.email,
+  }));
 };

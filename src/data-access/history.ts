@@ -1,6 +1,6 @@
 import { db } from "@/db";
 import { history } from "../models/schema";
-import { eq, and } from "drizzle-orm"; // Adjust the import based on your project structure
+import { eq, and, desc } from "drizzle-orm"; // Adjust the import based on your project structure
 
 type ReferenceType = "payment" | "project";
 
@@ -28,5 +28,6 @@ export const fetchHistory = async (
     .from(history)
     .where(
       and(eq(history.referenceId, referenceId), eq(history.referenceType, type))
-    );
+    )
+    .orderBy(desc(history.date));
 };
