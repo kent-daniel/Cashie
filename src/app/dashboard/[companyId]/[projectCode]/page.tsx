@@ -3,11 +3,12 @@ import { fetchProjectPaymentRows, getProjectByCode } from "./actions";
 import { PaymentRecordsTable } from "./components/PaymentRecordsTable";
 import { formatCurrency } from "../../utils";
 import ProjectCard from "./components/ProjectCard";
-import { ProjectChart } from "./components/ProjectChart";
+
 import DatePicker from "../payment-entry/components/date-picker";
 import { ExportToCsvButton } from "./components/ExportToCsvButton";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { ProjectMenu } from "./components/containers/ProjectMenu";
 
 // Server Component
 const Page = async ({
@@ -30,7 +31,7 @@ const Page = async ({
   return (
     <div className="p-8 gap-5 flex flex-col">
       <ProjectCard project={project} />
-      <ProjectChart project={project} />
+      <ProjectMenu project={project} />
       <div className="flex justify-between">
         <DatePicker />
         <ExportToCsvButton
