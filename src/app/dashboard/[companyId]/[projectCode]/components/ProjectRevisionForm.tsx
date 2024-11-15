@@ -6,11 +6,13 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { ProjectDomain } from "@/data-access/projects";
 import { formatCurrency } from "@/app/dashboard/utils";
+import { reviseProjectDetails } from "../actions";
+import { Project } from "@/data-access/projects";
+import { toast } from "react-toastify";
 
 interface ProjectRevisionFormProps {
-  project: ProjectDomain;
+  project: Project;
   closeForm: () => void;
 }
 
@@ -35,23 +37,32 @@ const ProjectRevisionForm: React.FC<ProjectRevisionFormProps> = ({
   } = useForm<FormData>({
     defaultValues: {
       projectName: project.name,
-      contractValue: formatCurrency(project.projectValue),
-      estimationBudget: formatCurrency(project.estimationBudget),
-      startDate: project.date,
+      contractValue: formatCurrency(Number(project.projectValue).toString()),
+      estimationBudget: formatCurrency(
+        Number(project.estimationBudget).toString()
+      ),
+      startDate: project.date.toISOString().split("T")[0],
       comment: "",
     },
   });
-  console.log(project);
-  const onSubmit = (data: FormData) => {
-    const formattedData = {
-      ...data,
-      contractValue: parseFloat(data.contractValue.replace(/[^0-9.-]+/g, "")),
-      estimationBudget: parseFloat(
-        data.estimationBudget.replace(/[^0-9.-]+/g, "")
-      ),
-    };
-    console.log("Form submitted:", formattedData);
+  const onSubmit = async (data: FormData) => {
+    console.log("Form submitted:", data);
     // Handle form submission logic
+    const response = await reviseProjectDetails(
+      data.projectName,
+      data.contractValue,
+      project.projectCode,
+      project.id,
+      data.comment,
+      data.estimationBudget,
+      data.startDate
+    );
+    if (response.success) {
+      toast.success(response.message);
+      closeForm();
+    } else {
+      toast.error(response.message);
+    }
   };
 
   return (

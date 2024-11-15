@@ -1,12 +1,13 @@
 "use client";
-import { ProjectDomain } from "@/data-access/projects";
-import React from "react";
+import { Project, ProjectDomain } from "@/data-access/projects";
+import React, { Suspense } from "react";
 import { PopoverForm } from "../../../buku-posting/components/popover-form";
 import { ProjectChart } from "../ProjectChart";
 import ProjectRevisionForm from "../ProjectRevisionForm";
 import { Separator } from "@/components/ui/separator";
+import { ProjectRevisionList } from "../ProjectRevisionList";
 
-export const ProjectMenu = ({ project }: { project: ProjectDomain }) => {
+export const ProjectMenu = ({ project }: { project: Project }) => {
   return (
     <div className="flex gap-4">
       <div className="w-1/2">
@@ -27,6 +28,9 @@ export const ProjectMenu = ({ project }: { project: ProjectDomain }) => {
             )}
           </PopoverForm>
         </div>
+        <Suspense fallback={"loading"}>
+          <ProjectRevisionList project={project} />
+        </Suspense>
         <Separator className="my-3" />
       </div>
     </div>

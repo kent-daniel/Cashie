@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/chart";
 import { getStatsByProjectCode } from "../../payment-entry/actions";
 import { parseCurrency } from "@/app/dashboard/utils";
-import { ProjectDomain } from "@/data-access/projects";
+import { Project } from "@/data-access/projects";
 
 const chartConfig = {
   totalDebit: {
@@ -31,7 +31,7 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export function ProjectChart({ project }: { project: ProjectDomain }) {
+export function ProjectChart({ project }: { project: Project }) {
   const [chartData, setChartData] = useState<
     { label: string; value: number; fill: string }[]
   >([]);

@@ -1,8 +1,17 @@
 "use server";
 
 import { getPaymentsByProjectCode, Payment } from "@/data-access/payment";
-import { fetchProjectByCode, ProjectDomain } from "@/data-access/projects";
+import {
+  fetchProjectByCode,
+  Project,
+  ProjectDomain,
+  updateProjectByCode,
+} from "@/data-access/projects";
 import { mkConfig } from "export-to-csv";
+import { parseCurrency } from "../../utils";
+import { addHistory, fetchHistory } from "@/data-access/history";
+import { getEmailFromKinde } from "../payment-entry/actions";
+import { revalidatePath } from "next/cache";
 
 export type PaymentRow = Payment & {
   debitAmount: number;
@@ -91,7 +100,7 @@ export const toModelPaymentRow = (payment: Payment): PaymentRow => {
 
 export const getProjectByCode = async (
   projectCode: string
-): Promise<{ success: boolean; project?: ProjectDomain; message?: string }> => {
+): Promise<{ success: boolean; project?: Project; message?: string }> => {
   try {
     // Call fetchProjectByCode to get the raw project data
     const result = await fetchProjectByCode(projectCode);
@@ -101,9 +110,9 @@ export const getProjectByCode = async (
     }
 
     // Map to ProjectDomain, converting date to string
-    const projectDomain: ProjectDomain = {
+    const projectDomain: Project = {
       ...result.project,
-      date: result.project.date.toString(), // or format as needed
+      date: new Date(result.project.date), // or format as needed
     };
 
     return { success: true, project: projectDomain };
@@ -141,4 +150,112 @@ export const getCsvDataFormat = async (
   });
 
   return JSON.stringify({ csvData, csvConfig });
+};
+
+const prepareUpdatedData = (
+  id: number,
+  name: string,
+  projectValue: string,
+  RAB: string,
+  projectCode: string,
+  date: string
+): Project => ({
+  id,
+  name,
+  projectValue: Number(parseCurrency(projectValue)).toString(),
+  estimationBudget: Number(parseCurrency(RAB)).toString(),
+  projectCode,
+  date: new Date(date),
+});
+
+const detectChanges = (
+  original: ProjectDomain,
+  updated: Project,
+  comment: string,
+  email: string
+) => {
+  const changes = [];
+
+  if (original.name !== updated.name)
+    changes.push(`Name: ${original.name} -> ${updated.name}`);
+  if (Number(original.projectValue).toString() !== updated.projectValue)
+    changes.push(
+      `Nilai kontrak: ${original.projectValue} -> ${updated.projectValue}`
+    );
+  if (Number(original.estimationBudget).toString() !== updated.estimationBudget)
+    changes.push(
+      `RAB: ${original.estimationBudget} -> ${updated.estimationBudget}`
+    );
+  if (original.date !== updated.date.toISOString().split("T")[0])
+    changes.push(`Tanggal: ${original.date} -> ${updated.date}`);
+
+  if (changes.length > 0)
+    changes.push(`Komentar: ${comment}`, `Diubah oleh: ${email}`);
+  return changes;
+};
+
+// Main function
+export const reviseProjectDetails = async (
+  name: string,
+  projectValue: string,
+  projectCode: string,
+  id: number,
+  comment: string,
+  RAB: string,
+  date: string
+): Promise<{ success: boolean; message: string }> => {
+  try {
+    // Retrieve the user's email
+    const email = await getEmailFromKinde();
+    if (!email) {
+      return { success: false, message: "Failed to retrieve user email" };
+    }
+
+    // Fetch original project values
+    const originalValuesResult = await fetchProjectByCode(projectCode);
+    if (!originalValuesResult.success || !originalValuesResult.project) {
+      return {
+        success: false,
+        message: `Error fetching project: ${originalValuesResult.message}`,
+      };
+    }
+    const originalValues = originalValuesResult.project;
+
+    // Prepare updated data
+    const updatedData = {
+      id,
+      name,
+      projectValue: parseCurrency(projectValue).toString(),
+      estimationBudget: parseCurrency(RAB).toString(),
+      projectCode,
+      date: new Date(date),
+    };
+
+    // Detect changes
+    const changes = detectChanges(originalValues, updatedData, comment, email);
+    if (changes.length === 0) {
+      return { success: true, message: "No changes detected" };
+    }
+
+    // Update project data
+    const result = await updateProjectByCode(updatedData);
+    if (!result.success) {
+      return {
+        success: false,
+        message: `Failed to update project: ${result.message}`,
+      };
+    }
+
+    // Add history with changes
+    await addHistory(id, "project", changes.join("\n"), email);
+    revalidatePath("/");
+    return { success: true, message: "Project revised successfully" };
+  } catch (error) {
+    return { success: false, message: `Error revising project: ${error}` };
+  }
+};
+
+export const fetchProjectRevisionHistory = async (projectId: number) => {
+  const result = await fetchHistory(projectId, "project");
+  result.map((history) => {});
 };

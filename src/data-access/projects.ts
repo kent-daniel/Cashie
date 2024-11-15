@@ -13,6 +13,7 @@ export interface ProjectData {
 }
 
 export type Project = {
+  id: number;
   projectCode: string;
   name: string;
   estimationBudget: string;
@@ -87,5 +88,23 @@ export const fetchUniqueProjectCodes = async () => {
       message: `Failed to fetch unique project codes: ${error}`,
     });
     return [];
+  }
+};
+
+export const updateProjectByCode = async (updatedData: Project) => {
+  try {
+    await db
+      .update(projects)
+      .set({
+        projectValue: updatedData.projectValue,
+        estimationBudget: updatedData.estimationBudget,
+        date: updatedData.date.toISOString().split("T")[0],
+        name: updatedData.name,
+      })
+      .where(eq(projects.projectCode, updatedData.projectCode));
+
+    return { success: true, message: "Project updated successfully" };
+  } catch (error) {
+    return { success: false, message: `Failed to update project: ${error}` };
   }
 };
