@@ -52,7 +52,7 @@ export const fetchProjectPaymentRows = async (
     let runningDebitTotal = 0;
     let runningCreditTotal = 0;
 
-    for (let i = 0; i < projectRecords.length; i++) {
+    for (let i = projectRecords.length - 1; i >= 0; i--) {
       const payment = projectRecords[i];
       const debitAmount = payment.category === "debit" ? payment.amount : 0;
       const creditAmount = payment.category === "credit" ? payment.amount : 0;
@@ -60,7 +60,7 @@ export const fetchProjectPaymentRows = async (
       runningDebitTotal += debitAmount;
       runningCreditTotal += creditAmount;
 
-      paymentRows.push({
+      paymentRows.unshift({
         ...payment,
         debitAmount,
         creditAmount,

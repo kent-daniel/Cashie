@@ -58,7 +58,7 @@ export function PaymentRecordsTable({
     onRowSelectionChange: setRowSelection,
     initialState: {
       pagination: {
-        pageSize: 20,
+        pageSize: 10,
       },
     },
     state: {
