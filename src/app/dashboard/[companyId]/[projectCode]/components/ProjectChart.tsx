@@ -40,17 +40,23 @@ export function ProjectChart({ project }: { project: ProjectDomain }) {
     const getData = async (projectCode: string) => {
       const result = await getStatsByProjectCode(projectCode);
       if (result === undefined) return;
+      const remainingValue =
+        Number(project.projectValue) - Number(parseCurrency(result.totalDebit));
       setChartData([
         {
           label: chartConfig.totalDebit.label,
           value: parseCurrency(result.totalDebit),
           fill: chartConfig.totalDebit.color,
         },
-        {
-          label: chartConfig.projectValue.label,
-          value: Number(project.projectValue),
-          fill: chartConfig.projectValue.color,
-        },
+        ...(remainingValue > 0
+          ? [
+              {
+                label: chartConfig.projectValue.label,
+                value: remainingValue,
+                fill: chartConfig.projectValue.color,
+              },
+            ]
+          : []),
       ]);
     };
 
@@ -59,7 +65,9 @@ export function ProjectChart({ project }: { project: ProjectDomain }) {
 
   const getPercentage = (value: number) => {
     const total = chartData.reduce((sum, entry) => sum + entry.value, 0);
-    return total ? ((value / total) * 100).toFixed(1) + "%" : "";
+    return total
+      ? ((value / Number(project.projectValue)) * 100).toFixed(1) + "%"
+      : "";
   };
 
   return (
@@ -71,7 +79,7 @@ export function ProjectChart({ project }: { project: ProjectDomain }) {
       <CardContent className="flex-1 pb-0">
         <ChartContainer
           config={chartConfig}
-          className="mx-auto aspect-square max-h-[300px] [&_.recharts-text]:fill-background"
+          className="mx-auto aspect-square max-h-[350px] [&_.recharts-text]:fill-background"
         >
           <PieChart>
             <ChartTooltip
