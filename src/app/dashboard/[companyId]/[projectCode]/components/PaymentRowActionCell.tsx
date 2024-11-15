@@ -7,8 +7,12 @@ import { toast } from "react-toastify";
 
 export const PaymentRowActionCell = ({ paymentId }: { paymentId: string }) => {
   const handleDelete = async () => {
-    await deletePayment(Number(paymentId));
-    toast.error("Payment deleted");
+    try {
+      await deletePayment(Number(paymentId));
+      toast.error("Payment deleted");
+    } catch (error) {
+      toast.error(error as string);
+    }
   };
   return (
     <div className="flex gap-2">

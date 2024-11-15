@@ -1,5 +1,4 @@
 "use server";
-import { PaymentPresentationDTO } from "@/app/dashboard/[companyId]/payment-entry/actions";
 import { db } from "@/db/index";
 import { payments, projects } from "@/models/schema";
 import { eq, desc, sql, and, gte, lte } from "drizzle-orm";
@@ -141,13 +140,13 @@ export const updatePayment = async (id: number, paymentData: PaymentData) => {
 };
 
 // Delete a payment by ID
-export const deletePaymentById = async (id: number) => {
+export const deletePaymentById = async (id: number, ownerEmail: string) => {
   const result = await db
     .update(payments)
     .set({
       isDeleted: true,
     })
-    .where(eq(payments.id, id));
+    .where(and(eq(payments.id, id), eq(payments.email, ownerEmail)));
   return result;
 };
 

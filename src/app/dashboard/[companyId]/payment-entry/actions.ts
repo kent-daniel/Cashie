@@ -54,11 +54,14 @@ const mapToPresentationPayment = (data: Payment): PaymentPresentationDTO => ({
 export const deletePayment = async (paymentId: number): Promise<void> => {
   const { getUser } = getKindeServerSession();
   const user = await getUser();
-
-  if (!user || user == null || !user.id)
-    throw new Error("something went wrong with authentication" + user);
-  await deletePaymentById(paymentId);
-  revalidatePath("/");
+  try {
+    if (!user || user == null || !user.id || !user.email)
+      throw new Error("something went wrong with authentication" + user);
+    await deletePaymentById(paymentId, user.email);
+    revalidatePath("/");
+  } catch (error) {
+    throw error;
+  }
 };
 
 export const addNewPaymentEntry = async ({
