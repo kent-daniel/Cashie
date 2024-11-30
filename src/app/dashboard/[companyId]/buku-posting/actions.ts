@@ -6,6 +6,7 @@ import {
   ProjectDomain,
   createProject,
   fetchProjectRecords,
+  fetchProjectsByName,
 } from "@/data-access/projects";
 import { revalidatePath } from "next/cache";
 import { formatCurrency, parseCurrency } from "../../utils";
@@ -62,6 +63,19 @@ export const fetchProjects = async (companyId: number): Promise<Project[]> => {
     return response.projects?.map(toModelProject) || [];
   } catch (error) {
     console.error("Failed to fetch projects:", error);
+    return [];
+  }
+};
+
+export const searchProjectsByName = async (
+  companyId: number,
+  query: string
+): Promise<Project[]> => {
+  try {
+    const response = await fetchProjectsByName(companyId, query);
+    return response.projects?.map(toModelProject) || [];
+  } catch (error) {
+    console.error("Failed to search projects by name:", error);
     return [];
   }
 };

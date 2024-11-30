@@ -1,7 +1,7 @@
 "use server";
 import { db } from "@/db/index";
 import { projects } from "@/models/schema";
-import { eq, desc } from "drizzle-orm";
+import { eq, desc, and, or, like } from "drizzle-orm";
 
 export interface ProjectData {
   companyId: number;
@@ -40,6 +40,34 @@ export const fetchProjectRecords = async (companyId: number) => {
       .select()
       .from(projects)
       .where(eq(projects.companyId, companyId))
+      .orderBy(desc(projects.date));
+
+    return { success: true, projects: projectRecords };
+  } catch (error) {
+    return {
+      success: false,
+      message: `Failed to fetch projects: ${error}`,
+    };
+  }
+};
+
+export const fetchProjectsByName = async (
+  companyId: number,
+  textQuery: string
+) => {
+  try {
+    const projectRecords = await db
+      .select()
+      .from(projects)
+      .where(
+        and(
+          eq(projects.companyId, companyId),
+          or(
+            like(projects.projectCode, `%${textQuery}%`),
+            like(projects.name, `%${textQuery}%`)
+          )
+        )
+      )
       .orderBy(desc(projects.date));
 
     return { success: true, projects: projectRecords };
