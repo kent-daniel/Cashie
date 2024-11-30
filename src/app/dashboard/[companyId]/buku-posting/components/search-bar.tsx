@@ -47,7 +47,7 @@ export function SearchBar({
   };
 
   return (
-    <div className="relative flex w-full max-w-md items-center mx-auto mt-5 space-x-3">
+    <div className="relative flex  items-center mx-auto mt-7 space-x-3 bg-zinc-800 p-3 rounded-md">
       <div className="flex items-center bg-primary-foreground px-3 rounded-md">
         <input
           type="text"
@@ -94,7 +94,7 @@ export function SearchBar({
       </DropdownMenu>
       <Button
         // variant="solid"
-        className="h-12 px-4 bg-emerald-500 hover:bg-emerald-600 text-white"
+        className="h-12 px-4 bg-emerald-700 hover:bg-emerald-600 text-white border-none"
         onClick={handleSearch}
       >
         <Search className="mr-2 h-5 w-5" />
