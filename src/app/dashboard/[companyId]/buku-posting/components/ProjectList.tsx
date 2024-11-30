@@ -14,7 +14,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { ArrowRightCircle } from "lucide-react";
+import { ArrowRightCircle, CircleCheck } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -22,6 +22,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { parseCurrency } from "@/app/dashboard/utils";
+import ProjectStatusBadge from "./ProjectStatusBadge";
 
 const ProjectCell = async ({ project }: { project: Project }) => {
   const { totalCredit, totalDebit } = await getProjectStatistics(
@@ -31,8 +32,10 @@ const ProjectCell = async ({ project }: { project: Project }) => {
   return (
     <Card className="w-full border border-zinc-700 bg-zinc-900 text-gray-100 shadow-lg rounded-lg">
       <CardHeader className="p-4 rounded-t-lg border-b border-zinc-700">
+        <ProjectStatusBadge completed={project.completed} />
         <CardTitle className="text-lg font-semibold text-gray-50 flex items-center relative justify-between w-full">
           {project.name}
+
           {parseCurrency(totalCredit) >
             parseCurrency(project.estimationBudget) && (
             <TooltipProvider>
@@ -110,8 +113,8 @@ export const ProjectList = async ({
   const projects =
     filter === "all"
       ? await fetchProjects(Number(companyId))
-      : query
-      ? await searchProjectsByQuery(Number(companyId), query)
+      : query || filter
+      ? await searchProjectsByQuery(Number(companyId), query, filter)
       : await fetchProjects(Number(companyId));
 
   return (

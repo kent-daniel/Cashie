@@ -54,7 +54,11 @@ export const fetchProjectRecords = async (companyId: number) => {
   }
 };
 
-export const queryProjects = async (companyId: number, textQuery: string) => {
+export const queryProjects = async (
+  companyId: number,
+  textQuery: string,
+  filter: string
+) => {
   try {
     const projectRecords = await db
       .select()
@@ -62,6 +66,11 @@ export const queryProjects = async (companyId: number, textQuery: string) => {
       .where(
         and(
           eq(projects.companyId, companyId),
+          filter === "active"
+            ? eq(projects.completed, false)
+            : filter === "completed"
+            ? eq(projects.completed, true)
+            : undefined,
           or(
             sql`lower(${
               projects.name
@@ -111,6 +120,7 @@ export const fetchUniqueProjectCodes = async () => {
     const projectCodes = await db
       .selectDistinct({ projectCode: projects.projectCode })
       .from(projects)
+      .where(eq(projects.completed, false))
       .orderBy(desc(projects.projectCode));
 
     return projectCodes.map((p) => p.projectCode);

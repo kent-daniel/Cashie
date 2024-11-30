@@ -70,10 +70,11 @@ export const fetchProjects = async (companyId: number): Promise<Project[]> => {
 
 export const searchProjectsByQuery = async (
   companyId: number,
-  query: string
+  query: string,
+  filter: string
 ): Promise<Project[]> => {
   try {
-    const response = await queryProjects(companyId, query);
+    const response = await queryProjects(companyId, query, filter);
     return response.projects?.map(toModelProject) || [];
   } catch (error) {
     console.error("Failed to search projects by name:", error);
