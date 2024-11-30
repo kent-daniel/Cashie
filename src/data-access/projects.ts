@@ -2,6 +2,7 @@
 import { db } from "@/db/index";
 import { projects } from "@/models/schema";
 import { eq, desc, and, or, like } from "drizzle-orm";
+import { sql } from "drizzle-orm";
 
 export interface ProjectData {
   companyId: number;
@@ -51,10 +52,7 @@ export const fetchProjectRecords = async (companyId: number) => {
   }
 };
 
-export const fetchProjectsByName = async (
-  companyId: number,
-  textQuery: string
-) => {
+export const queryProjects = async (companyId: number, textQuery: string) => {
   try {
     const projectRecords = await db
       .select()
@@ -63,8 +61,12 @@ export const fetchProjectsByName = async (
         and(
           eq(projects.companyId, companyId),
           or(
-            like(projects.projectCode, `%${textQuery.toLowerCase()}%`),
-            like(projects.name, `%${textQuery.toLowerCase()}%`)
+            sql`lower(${
+              projects.name
+            }) ILIKE '%' || ${textQuery.toLowerCase()} || '%'`,
+            sql`lower(${
+              projects.projectCode
+            }) ILIKE '%' || ${textQuery.toLowerCase()} || '%'`
           )
         )
       )

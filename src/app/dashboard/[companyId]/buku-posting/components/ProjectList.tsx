@@ -1,4 +1,8 @@
-import { getProjectStatistics, searchProjectsByName } from "../actions";
+import {
+  fetchProjects,
+  getProjectStatistics,
+  searchProjectsByQuery,
+} from "../actions";
 import { Project } from "@/data-access/projects";
 import {
   Card,
@@ -103,7 +107,13 @@ export const ProjectList = async ({
   query: string;
   filter: string;
 }) => {
-  const projects = await searchProjectsByName(Number(companyId), query);
+  const projects =
+    filter === "all"
+      ? await fetchProjects(Number(companyId))
+      : query
+      ? await searchProjectsByQuery(Number(companyId), query)
+      : await fetchProjects(Number(companyId));
+
   return (
     <>
       <div className="p-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 my-3">

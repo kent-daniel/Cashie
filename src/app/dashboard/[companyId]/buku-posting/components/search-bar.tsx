@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { X, ChevronDown, Search } from "lucide-react";
+import { X, ChevronDown, Search, Loader2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -28,22 +28,31 @@ export function SearchBar({
   const router = useRouter();
   const [searchText, setSearchText] = useState(query);
   const [selectedFilter, setSelectedFilter] = useState(filter);
+  const [isSearching, setIsSearching] = useState(false);
 
   const handleClear = () => {
     setSearchText("");
     router.push(window.location.pathname); // Removes all query params
   };
 
-  const handleSearch = () => {
+  const handleSearch = async () => {
+    setIsSearching(true);
     const queryString = new URLSearchParams({
       query: searchText,
       filter: selectedFilter,
     }).toString();
     router.push(`?${queryString}`);
+    setIsSearching(false);
   };
 
   const handleOnInput = (input: string) => {
     setSearchText(input);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      handleSearch();
+    }
   };
 
   return (
@@ -51,9 +60,10 @@ export function SearchBar({
       <div className="flex items-center bg-primary-foreground px-3 rounded-md">
         <input
           type="text"
-          placeholder="Cari..."
+          placeholder="Cari nama atau kode..."
           value={searchText}
           onChange={(e) => handleOnInput(e.target.value)}
+          onKeyDown={handleKeyDown}
           className="pr-14 h-12 bg-primary-foreground ring-0 focus:outline-none focus:ring-offset-0 border-none"
         />
 
@@ -93,11 +103,15 @@ export function SearchBar({
         </DropdownMenuContent>
       </DropdownMenu>
       <Button
-        // variant="solid"
         className="h-12 px-4 bg-emerald-700 hover:bg-emerald-600 text-white border-none"
         onClick={handleSearch}
+        disabled={isSearching}
       >
-        <Search className="mr-2 h-5 w-5" />
+        {isSearching ? (
+          <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+        ) : (
+          <Search className="mr-2 h-5 w-5" />
+        )}
         Search
       </Button>
     </div>
