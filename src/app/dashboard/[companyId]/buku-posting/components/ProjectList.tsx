@@ -1,4 +1,4 @@
-import { fetchProjects, getProjectStatistics } from "../actions";
+import { getProjectStatistics, searchProjectsByName } from "../actions";
 import { Project } from "@/data-access/projects";
 import {
   Card,
@@ -94,13 +94,23 @@ const ProjectCell = async ({ project }: { project: Project }) => {
   );
 };
 
-export const ProjectList = async ({ companyId }: { companyId: string }) => {
-  const projects = await fetchProjects(Number(companyId));
+export const ProjectList = async ({
+  companyId,
+  query,
+  filter,
+}: {
+  companyId: string;
+  query: string;
+  filter: string;
+}) => {
+  const projects = await searchProjectsByName(Number(companyId), query);
   return (
-    <div className="p-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 my-3">
-      {projects?.map((project, index) => (
-        <ProjectCell key={index} project={project} />
-      ))}
-    </div>
+    <>
+      <div className="p-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 my-3">
+        {projects?.map((project, index) => (
+          <ProjectCell key={index} project={project} />
+        ))}
+      </div>
+    </>
   );
 };

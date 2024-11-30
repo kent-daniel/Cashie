@@ -1,9 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { X, ChevronDown } from "lucide-react";
+import { X, ChevronDown, Search } from "lucide-react";
 
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -19,54 +18,66 @@ const filterOptions = [
   { value: "all", label: "Semua" },
 ];
 
-export function SearchBar() {
+export function SearchBar({
+  filter,
+  query,
+}: {
+  filter: string;
+  query: string;
+}) {
   const router = useRouter();
-  const [searchText, setSearchText] = useState("");
-  const [selectedFilter, setSelectedFilter] = useState("");
+  const [searchText, setSearchText] = useState(query);
+  const [selectedFilter, setSelectedFilter] = useState(filter);
 
   const handleClear = () => {
     setSearchText("");
-    router.push(window.location.pathname); // This removes all query params
+    router.push(window.location.pathname); // Removes all query params
+  };
+
+  const handleSearch = () => {
+    const queryString = new URLSearchParams({
+      query: searchText,
+      filter: selectedFilter,
+    }).toString();
+    router.push(`?${queryString}`);
   };
 
   const handleOnInput = (input: string) => {
     setSearchText(input);
-    const queryString = new URLSearchParams({
-      query: input,
-      filter: selectedFilter,
-    }).toString();
-
-    router.push(`?${queryString}`);
   };
 
   return (
-    <div className="relative flex w-full max-w-md items-center mx-auto mt-5">
-      <Input
-        type="text"
-        placeholder="Cari..."
-        value={searchText}
-        onChange={(e) => handleOnInput(e.target.value)}
-        className="pr-20 bg-primary-foreground h-12 text-lg" // Made input taller and text larger
-      />
-      {searchText && (
+    <div className="relative flex w-full max-w-md items-center mx-auto mt-5 space-x-3">
+      <div className="flex items-center bg-primary-foreground px-3 rounded-md">
+        <input
+          type="text"
+          placeholder="Cari..."
+          value={searchText}
+          onChange={(e) => handleOnInput(e.target.value)}
+          className="pr-14 h-12 bg-primary-foreground ring-0 focus:outline-none focus:ring-offset-0 border-none"
+        />
+
         <Button
           variant="ghost"
           size="icon"
-          className="absolute right-20 top-1/2 -translate-y-1/2"
+          className={`bg-primary-foreground ${
+            searchText ? "opacity-100 cursor-pointer" : "opacity-0 cursor-text"
+          }`}
           onClick={handleClear}
         >
           <X className="h-4 w-4" />
           <span className="sr-only">Clear search</span>
         </Button>
-      )}
+      </div>
+
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button
             variant="ghost"
             size="sm"
-            className="absolute right-1 top-1/2 -translate-y-1/2"
+            className="h-12 bg-primary-foreground flex items-center justify-between"
           >
-            {selectedFilter || "Filter"}{" "}
+            {selectedFilter || "Filter"}
             <ChevronDown className="ml-1 h-4 w-4" />
           </Button>
         </DropdownMenuTrigger>
@@ -74,13 +85,21 @@ export function SearchBar() {
           {filterOptions.map((option) => (
             <DropdownMenuItem
               key={option.value}
-              onClick={() => setSelectedFilter(option.label)}
+              onClick={() => setSelectedFilter(option.value)}
             >
               {option.label}
             </DropdownMenuItem>
           ))}
         </DropdownMenuContent>
       </DropdownMenu>
+      <Button
+        // variant="solid"
+        className="h-12 px-4 bg-emerald-500 hover:bg-emerald-600 text-white"
+        onClick={handleSearch}
+      >
+        <Search className="mr-2 h-5 w-5" />
+        Search
+      </Button>
     </div>
   );
 }

@@ -63,8 +63,8 @@ export const fetchProjectsByName = async (
         and(
           eq(projects.companyId, companyId),
           or(
-            like(projects.projectCode, `%${textQuery}%`),
-            like(projects.name, `%${textQuery}%`)
+            like(projects.projectCode, `%${textQuery.toLowerCase()}%`),
+            like(projects.name, `%${textQuery.toLowerCase()}%`)
           )
         )
       )
