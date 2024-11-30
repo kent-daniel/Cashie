@@ -35,6 +35,7 @@ export const projects = pgTable("projects", {
     precision: 15,
     scale: 2,
   }).notNull(),
+  completed: boolean("completed").notNull().default(false),
   date: date("date").notNull(),
 });
 

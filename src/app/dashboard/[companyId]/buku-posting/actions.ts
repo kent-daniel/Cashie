@@ -33,6 +33,7 @@ const toModelProject = (project: typeof projects.$inferSelect): Project => {
     estimationBudget: formatCurrency(
       Number(project.estimationBudget).toString()
     ),
+    completed: project.completed,
     name: project.name,
     date: new Date(project.date),
   };

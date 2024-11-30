@@ -13,6 +13,7 @@ export const ProjectMenu = ({ project }: { project: Project }) => {
         <PopoverForm
           name={"Revisi project"}
           title={"Revisi Nilai & RAB project"}
+          disabled={project.completed}
         >
           {(closePopover) => (
             <ProjectRevisionForm

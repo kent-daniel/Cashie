@@ -10,6 +10,7 @@ export interface ProjectData {
   name: string;
   estimationBudget: string;
   projectValue: string;
+  completed: boolean;
   date: Date;
 }
 
@@ -19,6 +20,7 @@ export type Project = {
   name: string;
   estimationBudget: string;
   projectValue: string;
+  completed: boolean;
   date: Date;
 };
 
@@ -131,10 +133,33 @@ export const updateProjectByCode = async (updatedData: Project) => {
         date: updatedData.date.toISOString().split("T")[0],
         name: updatedData.name,
       })
-      .where(eq(projects.projectCode, updatedData.projectCode));
+      .where(
+        and(
+          eq(projects.projectCode, updatedData.projectCode),
+          eq(projects.completed, false)
+        )
+      );
 
     return { success: true, message: "Project updated successfully" };
   } catch (error) {
     return { success: false, message: `Failed to update project: ${error}` };
+  }
+};
+
+export const markProjectAsComplete = async (projectId: number) => {
+  try {
+    await db
+      .update(projects)
+      .set({
+        completed: true,
+      })
+      .where(and(eq(projects.id, projectId), eq(projects.completed, false)));
+
+    return { success: true, message: "Project marked as complete" };
+  } catch (error) {
+    return {
+      success: false,
+      message: `Failed to mark project as complete: ${error}`,
+    };
   }
 };

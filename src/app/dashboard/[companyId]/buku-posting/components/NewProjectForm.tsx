@@ -42,7 +42,11 @@ export const NewProjectForm = ({
   });
 
   const onSubmit: SubmitHandler<FormData> = async (data) => {
-    const response = await createNewProject({ companyId: companyId, ...data });
+    const response = await createNewProject({
+      companyId: companyId,
+      completed: false,
+      ...data,
+    });
     if (!response.success) {
       toast.error(response.message); // Display error toast
     } else {

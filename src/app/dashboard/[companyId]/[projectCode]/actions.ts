@@ -3,6 +3,7 @@
 import { getPaymentsByProjectCode, Payment } from "@/data-access/payment";
 import {
   fetchProjectByCode,
+  markProjectAsComplete,
   Project,
   ProjectDomain,
   updateProjectByCode,
@@ -215,6 +216,7 @@ export const reviseProjectDetails = async (
       projectValue: Number(parseCurrency(projectValue)).toString(),
       estimationBudget: Number(parseCurrency(RAB)).toString(),
       projectCode,
+      completed: false,
       date: new Date(date),
     };
 
@@ -241,12 +243,43 @@ export const reviseProjectDetails = async (
     return { success: false, message: `Error revising project: ${error}` };
   }
 };
+
 export interface ProjectRevisionHistory {
   date: string;
   description: string;
   email: string;
 }
 
+export const markProjectAsCompleted = async (projectId: number) => {
+  try {
+    const email = await getEmailFromKinde();
+    if (!email) {
+      throw new Error("Failed to retrieve user email");
+    }
+
+    const result = await markProjectAsComplete(projectId);
+    if (!result.success) {
+      throw new Error(result.message);
+    }
+
+    await addHistory(
+      projectId,
+      "project",
+      "Project ditutup dan ditandai selesai",
+      email
+    );
+    revalidatePath("/");
+    return {
+      success: true,
+      message: "Project marked as completed successfully",
+    };
+  } catch (error) {
+    return {
+      success: false,
+      message: `Failed to mark project as complete: ${error}`,
+    };
+  }
+};
 export const fetchProjectRevisionHistory = async (
   projectId: number
 ): Promise<ProjectRevisionHistory[]> => {

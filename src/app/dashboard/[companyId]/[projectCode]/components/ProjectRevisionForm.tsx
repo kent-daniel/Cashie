@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -10,6 +10,8 @@ import { formatCurrency } from "@/app/dashboard/utils";
 import { reviseProjectDetails } from "../actions";
 import { Project } from "@/data-access/projects";
 import { toast } from "react-toastify";
+import { PopoverForm } from "../../buku-posting/components/popover-form";
+import { ProjectCompleteConfirmationDialogue } from "./ProjectCompleteConfirmationDialogue";
 
 interface ProjectRevisionFormProps {
   project: Project;
@@ -31,7 +33,6 @@ const ProjectRevisionForm: React.FC<ProjectRevisionFormProps> = ({
   const {
     register,
     handleSubmit,
-    control,
     setValue,
     formState: { errors },
   } = useForm<FormData>({
@@ -134,7 +135,21 @@ const ProjectRevisionForm: React.FC<ProjectRevisionFormProps> = ({
         />
       </div>
 
-      <Button type="submit">Submit</Button>
+      <Button type="submit" className="w-full">
+        Submit
+      </Button>
+      <PopoverForm
+        name={"Tutup project"}
+        title={"Konfirmasi untuk menutup proyek"}
+        className="w-full bg-destructive border-destructive hover:bg-destructive/80"
+      >
+        {(closePopover) => (
+          <ProjectCompleteConfirmationDialogue
+            closePopover={closePopover}
+            projectId={project.id}
+          />
+        )}
+      </PopoverForm>
     </form>
   );
 };
