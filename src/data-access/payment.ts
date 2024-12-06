@@ -17,7 +17,7 @@ export type Payment = {
   projectCode: string;
   amount: number;
   description?: string;
-  category: "debit" | "credit" | "saldo";
+  category: "debit" | "credit";
   isEdited: boolean;
   isDeleted: boolean;
   date: Date;
@@ -43,7 +43,7 @@ const toModelPayment = (payment: typeof payments.$inferSelect): Payment => {
     projectCode: payment.projectCode,
     amount: parseFloat(payment.amount),
     description: payment.description ?? "",
-    category: payment.category as "debit" | "credit" | "saldo",
+    category: payment.category as "debit" | "credit",
     date: new Date(payment.date),
     isDeleted: payment.isDeleted,
     isEdited: payment.isEdited,

@@ -16,7 +16,7 @@ export type PaymentPresentationDTO = {
   id: number;
   amount: number;
   projectCode: string;
-  category: "debit" | "credit" | "saldo";
+  category: "debit" | "credit";
   isEdited: boolean;
   isDeleted: boolean;
   description: string;
