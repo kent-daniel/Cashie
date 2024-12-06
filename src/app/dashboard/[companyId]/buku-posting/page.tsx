@@ -3,6 +3,7 @@ import "react-toastify/dist/ReactToastify.css";
 import ProjectListHeader from "./components/ProjectListHeader";
 import { ProjectList } from "./components/ProjectList";
 import { SearchBar } from "@/app/dashboard/[companyId]/buku-posting/components/search-bar";
+import OverheadCostHeader from "./components/OverheadCostHeader";
 
 const page = ({
   params,
@@ -17,6 +18,7 @@ const page = ({
     <>
       <div className="mx-auto px-3 flex flex-col justify-center">
         <SearchBar query={query || ""} filter={filter || ""} />
+        <OverheadCostHeader companyId={companyId} />
         <ProjectListHeader companyId={companyId} />
         <ProjectList
           companyId={companyId}
