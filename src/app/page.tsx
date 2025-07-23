@@ -30,12 +30,6 @@ export default function Home() {
         >
           Masuk ke akun
         </LoginLink>
-        <RegisterLink
-          authUrlParams={{ lang: "id" }}
-          className="px-6 py-3 text-center text-emerald-500 hover:bg-zinc-100 border border-emerald-500 rounded-md dark:hover:bg-zinc-800/60 focus:outline-none focus:ring-2 transition duration-300 dark:bg-zinc-800 dark:text-emerald-400 dark:border-emerald-400 dark:hover:bg-zinc-700"
-        >
-          Daftar Akun Baru
-        </RegisterLink>
       </div>
 
       {/* Toast Container */}
