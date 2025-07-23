@@ -1,8 +1,5 @@
 import Image from "next/image";
-import {
-  RegisterLink,
-  LoginLink,
-} from "@kinde-oss/kinde-auth-nextjs/components";
+import { LoginLink } from "@kinde-oss/kinde-auth-nextjs/components";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
